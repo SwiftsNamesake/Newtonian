@@ -37,8 +37,6 @@ class AnimationState:
 
 	def pointToWorldCoords(self, point):
 		#
-		print('Converting to world coords')
-		print(point.imag, self.s.imag, self.O.imag)
 		return ((point.real/self.s.real)+self.O.real, (point.imag/self.s.imag)+self.O.imag)
 
 	def worldToScreen(self):
@@ -47,7 +45,7 @@ class AnimationState:
 		BOTTOMRIGHT = self.pointToScreenCoords(self.P+self.S)
 		#screen = ((P.real+self.O.real)*s.real, (P.imag+self.O.imag)*s.imag, (P.real+S.real+self.O.imag)*s.real, (P.imag+S.imag+self.O.real)*s.imag)
 		screen = TOPLEFT + BOTTOMRIGHT
-		print('X: %.2fpx, Y: %.2fpx' % screen[:2])
+		#print('X: %.2fpx, Y: %.2fpx' % screen[:2])
 		#print('Width: %dpx, Height: %dpx' % (screen[2]-screen[0], screen[1]-screen[3]))
 		return screen
 
@@ -83,32 +81,47 @@ ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
 
 
 def clickClosure():
-	text = canvas.create_text((0,0), text='', anchor=tk.NW)
-	point = canvas.create_oval((0,0,2,2), state=tk.HIDDEN, fill='black')
+	text = canvas.create_text((0,0), text='', anchor=tk.SW)
 	def printCoords(event):
 		''' Prints world and screen coordinates '''
 		world = state.pointToWorldCoords(event.x+event.y*1j)
 		prev = canvas.coords(text)
+
 		canvas.move(text, event.x-prev[0], event.y-prev[1])
-		canvas.move(point, event.x-prev[0]-1, event.y-prev[1]-1)
-		print(world)
 		canvas.itemconfig(text, text='World|X=%.2fm, Y=%.2fm\nScreen|X=%dpx, Y=%dpx' % (world + (event.x, event.y)))
+
 	return printCoords
+
 
 window.bind('<Motion>', clickClosure())
 
 def closure(state):
 	def animate():
+		# Calculate position
 		P, V, A, S, T = state.P, state.V, state.A, state.S, state.T
 		V += A*dt # Is this correct ?
 		P += V*dt # Is this corect ?
 		T += dt   # Increment time
 
-		# if (P.imag-S.imag) <= G:
-		# 	V = (V.real-V.imag*1j) # Collide with ground
-		# print(P.imag-S.imag, 20/s.imag)
-		print('X=%.2fm, Y=%.2fm (T=%.2fs)' % (P.real, P.imag, T))
-	
+		# Collisions
+		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
+		# TODO: See if the Canvas has a hidden white border
+		if (P+S).imag <= G:
+			V = (V.real+abs(V.imag)*1j) # Collide with ground
+			P = P.real+(G-S.imag)*1j
+		elif P.imag >= state.H:
+			V = (V.real-abs(V.imag)*1j) # Collide with 'ceiling'
+			P = P.real+state.H*1j
+
+		if P.real <= 0:
+			V = (abs(V.real)+V.imag*1j) # Collide with ground
+			P = 0+P.imag*1j
+		elif (P+S).real >= state.W:
+			V = (-abs(V.real)+V.imag*1j) # Collide with ground
+			P = (state.W-S.real)+P.imag*1j
+		#print('X=%.2fm, Y=%.2fm (T=%.2fs)' % (P.real, P.imag, T))
+		
+		# Redraw
 		canvas.coords(ball, state.worldToScreen())
 		state.P, state.V, state.A, state.S, state.T = P, V, A, S, T
 		window.after(int(dt*1000), animate) # Schedule the next frame, in dt * 1000 milliseconds
