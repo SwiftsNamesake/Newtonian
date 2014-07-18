@@ -143,6 +143,11 @@ def closure(state):
 		# Redraw
 		canvas.coords(ball, state.worldToScreen())
 		state.P, state.V, state.A, state.S, state.T = P, V, A, S, T
+
+		# Plot
+		canvas.create_oval(state.pointToScreenCoords(P)+state.pointToScreenCoords(P+0.02-0.02j), fill='black')
+
+		#
 		window.after(int(dt*1000), animate) # Schedule the next frame, in dt * 1000 milliseconds
 
 	return animate
