@@ -109,7 +109,7 @@ def position(t, p0, v0, a):
 	def p(pos, vel):
 		return (pos + vel*t + (1/2)*a*t**2)
 
-	return p(p0.real, v0.real)+p(p0.imag, v0.imag)*1j
+	return p(p0.real, v0.real)+p(p0.imag, v0.imag)*1j # x + yi
 
 
 def closure(state):
@@ -124,6 +124,7 @@ def closure(state):
 		# Collisions
 		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
 		# TODO: See if the Canvas has a hidden white border
+		# TODO: Work out when the collision occurs, don't just reset
 		if (P+S).imag <= G:
 			V = (V.real+abs(V.imag)*1j) # Collide with ground
 			P = P.real+(G-S.imag)*1j
