@@ -16,6 +16,7 @@ canvas.pack()
 
 class AnimationState:
 	def __init__(self, P, V, A, S, O):
+	#def __init__(self, P : 'Position vector', V : 'Velocity vector', A : 'Acceleration vector', S : 'Scale vector', O : 'Origin offset'):
 		# Physics
 		self.P = P 	 # Position vector
 		self.V = V 	 # Velocity vector
@@ -32,15 +33,18 @@ class AnimationState:
 
 
 	def pointToScreenCoords(self, point):
-		#
+		''' Converts from world space to canvas space '''
+		# TODO: Rename (?)
 		return (int((point.real-self.O.real)*self.s.real), int((point.imag-self.O.imag)*self.s.imag)) # TODO: Allow X origin offset (✓)
 
 	def pointToWorldCoords(self, point):
-		#
+		''' Converts from canvas space to world space '''
+		# TODO: Rename (?)
 		return ((point.real/self.s.real)+self.O.real, (point.imag/self.s.imag)+self.O.imag)
 
 	def worldToScreen(self):
-		# TODO: Implement world-space to screen space method
+		# TODO: Implement world-space to screen space method (✓)
+		# TODO: Allow rotated coordinate systems (?)
 		TOPLEFT = self.pointToScreenCoords(self.P)
 		BOTTOMRIGHT = self.pointToScreenCoords(self.P+self.S)
 		#screen = ((P.real+self.O.real)*s.real, (P.imag+self.O.imag)*s.imag, (P.real+S.real+self.O.imag)*s.real, (P.imag+S.imag+self.O.real)*s.imag)
@@ -52,6 +56,7 @@ class AnimationState:
 
 
 # TODO: Encapsulate coordinate system conversion logic (cf. AnimationState) (...)
+# TODO: Encapsulate animation and related parameters (cf. AnimationState)
 s = 100.0-100j 	# Scale vectpr (px/m) # TODO: Make this a vector too (✓)
 G = 0.2 		# Ground height (m)
 S = 0.2-0.2j 	# Size vector (distance from top left) (m)
