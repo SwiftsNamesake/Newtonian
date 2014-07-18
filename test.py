@@ -67,7 +67,7 @@ H = height/s.imag # TODO: Fix this value
 O = 0.0+H*1j 	# Offset between world origin and screen origin
 
 P = 0.05+0.8j	# Position vector (top left) (m)
-A = 0.09-9.82j 	# Acceleration vector (m/s^2)
+A = 0.00-9.82j 	# Acceleration vector (m/s^2)
 V = 0.60+5.6j	# Velocity vector (m/s)
 
 FPS = 30 	  # Frames per second
@@ -100,13 +100,26 @@ def clickClosure():
 
 window.bind('<Motion>', clickClosure())
 
+def position(t, p0, v0, a):
+	''' Calculates position as a function of time, based on initial position, initial velocity, and acceleration '''
+	# TOOD: Oxford comma (?)
+	# TODO: Better names (?)
+	# TODO: Explain proof (?)
+
+	def p(pos, vel):
+		return (pos + vel*t + (1/2)*a*t**2)
+
+	return p(p0.real, v0.real)+p(p0.imag, v0.imag)*1j
+
+
 def closure(state):
 	def animate():
 		# Calculate position
 		P, V, A, S, T = state.P, state.V, state.A, state.S, state.T
-		V += A*dt # Is this correct ?
-		P += V*dt # Is this corect ?
-		T += dt   # Increment time
+			
+		P = position(dt, state.P, state.V, state.A)
+		V += A*dt
+		T += dt
 
 		# Collisions
 		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
