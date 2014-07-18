@@ -2,6 +2,8 @@
 
 import tkinter as tk
 
+from collections import namedtuple
+
 size = width, height = 300, 300
 
 window = tk.Tk()
@@ -11,43 +13,108 @@ window.geometry('%dx%d' % size)
 canvas = tk.Canvas(width=width, height=height)
 canvas.pack()
 
-S = 0.2+0.2j 	# Size (m)
-s = 100.0-100j 	# Scale (px/m) # TODO: Make this a vector too (✓)
-
-P = 0.05+2.8j	# Position vector (m)
-A = 0-9.82j 	# Acceleration vector (m/s^2)
-V = 2.6-3.6j	# Velocity vector (m/s)
-
-FPS = 30
-dt = 1.0/FPS # Time between consecutive frames (s)
-
-ground 	= canvas.create_rectangle((0, height-20, width, height), fill='green', width=0) # (left-X, top-Y, right-X, bottom-Y), fill colour, border width
-sky 	= canvas.create_rectangle((0, 0, width, height-20), fill='lightBlue', width=0)
-ball 	= canvas.create_oval((P.real*s.real, P.imag*s.imag, (P.real+S.real)*s.real, (P.imag+S.imag)*s.imag), fill='red')
 
 class AnimationState:
-	def __init__(self, P, V, A):
+	def __init__(self, P, V, A, S, O):
+		# Physics
 		self.P = P 	 # Position vector
 		self.V = V 	 # Velocity vector
 		self.A = A 	 # Acceleration vector
+		self.S = S 	 # Size vector # TODO: Make this a real vector (ie invert Y)
 		self.T = 0.0 # Time
 
-def closure(P, V, A):
-	state = AnimationState(P, V, A)
-	def animate():
-		P, V, A, T = state.P, state.V, state.A, state.T
-		V += A*dt
-		P += V*dt
-		T += dt
+		# Coordinates
+		
+		self.s = 100-100j 		# Scale (px/m)
+		self.W = abs(300/self.s.real)
+		self.H = abs(300/self.s.imag) # TODO: Convert to world coords (✓); Extract width and height
+		self.O = 0.0+self.H*1j 	# Offset (m) (world origin -> screen origin)
 
+
+	def pointToScreenCoords(self, point):
+		#
+		return (int((point.real-self.O.real)*self.s.real), int((point.imag-self.O.imag)*self.s.imag)) # TODO: Allow X origin offset (✓)
+
+	def pointToWorldCoords(self, point):
+		#
+		print('Converting to world coords')
+		print(point.imag, self.s.imag, self.O.imag)
+		return ((point.real/self.s.real)+self.O.real, (point.imag/self.s.imag)+self.O.imag)
+
+	def worldToScreen(self):
+		# TODO: Implement world-space to screen space method
+		TOPLEFT = self.pointToScreenCoords(self.P)
+		BOTTOMRIGHT = self.pointToScreenCoords(self.P+self.S)
+		#screen = ((P.real+self.O.real)*s.real, (P.imag+self.O.imag)*s.imag, (P.real+S.real+self.O.imag)*s.real, (P.imag+S.imag+self.O.real)*s.imag)
+		screen = TOPLEFT + BOTTOMRIGHT
+		print('X: %.2fpx, Y: %.2fpx' % screen[:2])
+		#print('Width: %dpx, Height: %dpx' % (screen[2]-screen[0], screen[1]-screen[3]))
+		return screen
+
+
+
+# TODO: Encapsulate coordinate system conversion logic (cf. AnimationState) (...)
+s = 100.0-100j 	# Scale vectpr (px/m) # TODO: Make this a vector too (✓)
+G = 0.2 		# Ground height (m)
+S = 0.2-0.2j 	# Size vector (distance from top left) (m)
+
+W = width/s.real  # TODO: Fix this value ?
+H = height/s.imag # TODO: Fix this value
+
+O = 0.0+H*1j 	# Offset between world origin and screen origin
+
+P = 0.05+0.8j	# Position vector (top left) (m)
+A = 0.09-9.82j 	# Acceleration vector (m/s^2)
+V = 0.60+5.6j	# Velocity vector (m/s)
+
+FPS = 30 	  # Frames per second
+dt  = 1.0/FPS # Time between consecutive frames (s)
+
+state = AnimationState(P, V, A, S, O)
+
+ground 	= canvas.create_rectangle((0, height+int(G*s.imag), width, height), fill='green', width=0) # (left-X, top-Y, right-X, bottom-Y), fill colour, border width
+sky 	= canvas.create_rectangle((0, 0, width, height+int(G*s.imag)), fill='lightBlue', width=0)
+ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
+
+#rect = namedtuple('Rect', 'left top right bottom, cx, cy, width, height')(P.real, P.imag, P.real+S.real, P.imag-S.imag, P.real+S.real/2, P.imag-S.imag/2, S.real, S.imag)
+#print('BALL\n')
+#for attr in rect._fields:
+#	print('%s: %.2fm' % (attr, getattr(rect,attr)))
+
+
+def clickClosure():
+	text = canvas.create_text((0,0), text='', anchor=tk.NW)
+	point = canvas.create_oval((0,0,2,2), state=tk.HIDDEN, fill='black')
+	def printCoords(event):
+		''' Prints world and screen coordinates '''
+		world = state.pointToWorldCoords(event.x+event.y*1j)
+		prev = canvas.coords(text)
+		canvas.move(text, event.x-prev[0], event.y-prev[1])
+		canvas.move(point, event.x-prev[0]-1, event.y-prev[1]-1)
+		print(world)
+		canvas.itemconfig(text, text='World|X=%.2fm, Y=%.2fm\nScreen|X=%dpx, Y=%dpx' % (world + (event.x, event.y)))
+	return printCoords
+
+window.bind('<Motion>', clickClosure())
+
+def closure(state):
+	def animate():
+		P, V, A, S, T = state.P, state.V, state.A, state.S, state.T
+		V += A*dt # Is this correct ?
+		P += V*dt # Is this corect ?
+		T += dt   # Increment time
+
+		# if (P.imag-S.imag) <= G:
+		# 	V = (V.real-V.imag*1j) # Collide with ground
+		# print(P.imag-S.imag, 20/s.imag)
 		print('X=%.2fm, Y=%.2fm (T=%.2fs)' % (P.real, P.imag, T))
 	
-		canvas.coords(ball, (P.real*s.real, P.imag*s.imag, (P.real+S.real)*s.real, (P.imag+S.imag)*s.imag))
-		state.P, state.V, state.A, state.T = P, V, A, T
-		window.after(int(dt*1000), animate)
-		
+		canvas.coords(ball, state.worldToScreen())
+		state.P, state.V, state.A, state.S, state.T = P, V, A, S, T
+		window.after(int(dt*1000), animate) # Schedule the next frame, in dt * 1000 milliseconds
+
 	return animate
 
-closure(P, V, A)()
+closure(state)()
 
 window.mainloop()
