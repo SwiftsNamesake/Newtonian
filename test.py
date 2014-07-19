@@ -3,6 +3,9 @@
 import tkinter as tk
 
 from collections import namedtuple
+from itertools import cycle
+
+from math import copysign
 
 size = width, height = 300, 300
 
@@ -10,9 +13,10 @@ window = tk.Tk()
 window.title('Newtonian')
 window.geometry('%dx%d' % size)
 
-canvas = tk.Canvas(width=width, height=height)
+canvas = tk.Canvas(width=width, height=height, bd=0)
 canvas.pack()
 
+window.PAUSE = False
 
 class AnimationState:
 	def __init__(self, P, V, A, S, O):
@@ -66,12 +70,13 @@ H = height/s.imag # TODO: Fix this value
 
 O = 0.0+H*1j 	# Offset between world origin and screen origin
 
-P = 0.05+0.8j	# Position vector (top left) (m)
+P = 0.15+0.8j	# Position vector (top left) (m)
 A = 0.00-9.82j 	# Acceleration vector (m/s^2)
-V = 0.60+5.6j	# Velocity vector (m/s)
+V = 1.06+5.6j	# Velocity vector (m/s)
 
 FPS = 30 	  # Frames per second
 dt  = 1.0/FPS # Time between consecutive frames (s)
+# TODO: Decouple real dt and simulation dt (?)
 
 state = AnimationState(P, V, A, S, O)
 
@@ -87,18 +92,28 @@ ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
 
 def clickClosure():
 	text = canvas.create_text((0,0), text='', anchor=tk.SW)
-	def printCoords(event):
+	def showCoords(event):
 		''' Prints world and screen coordinates '''
 		world = state.pointToWorldCoords(event.x+event.y*1j)
 		prev = canvas.coords(text)
 
+		msg  = 'World  | X={:.2f}m, Y={:.2f}m\nScreen | X={:d}px,    Y={:d}px'.format(world[0], world[1], event.x, event.y)
+		canvas.itemconfig(text, text=msg) # TODO: Make them line up
 		canvas.move(text, event.x-prev[0], event.y-prev[1])
-		canvas.itemconfig(text, text='World|X=%.2fm, Y=%.2fm\nScreen|X=%dpx, Y=%dpx' % (world + (event.x, event.y)))
+		
+		prev = canvas.bbox(text)
 
-	return printCoords
+		anch = (tk.N if event.y < (prev[3]-prev[1]) else tk.S) + (tk.E if width-event.x < (prev[2]-prev[0]) else tk.W)
+		canvas.itemconfig(text, anchor=anch)
 
+	return showCoords
+
+
+def pause(event):
+	window.PAUSE = not window.PAUSE
 
 window.bind('<Motion>', clickClosure())
+window.bind('<space>', pause)
 
 def position(t, p0, v0, a):
 	''' Calculates position as a function of time, based on initial position, initial velocity, and acceleration '''
@@ -106,17 +121,32 @@ def position(t, p0, v0, a):
 	# TODO: Better names (?)
 	# TODO: Explain proof (?)
 
-	def p(pos, vel):
-		return (pos + vel*t + (1/2)*a*t**2)
+	def p(pos, vel, acc):
+		return (pos + vel*t + (1/2)*acc*t**2)
 
-	return p(p0.real, v0.real)+p(p0.imag, v0.imag)*1j # x + yi
+	return p(p0.real, v0.real, a.real)+p(p0.imag, v0.imag, a.imag)*1j # x + yi
 
 
 def closure(state):
+	''' '''
+
+	count = int(1.2/dt) # Delay / 
+	plot  = [ canvas.create_oval((-3,-3,0,0), fill='#022EEF', width=0) for x in range(count) ]
+	plot  = cycle(plot)
+
+	def movePoint(point, x, y):
+		coords = canvas.coords(point)
+		canvas.move(point, x-coords[0], y-coords[1])
+
+	MIN = namedtuple('MIN', 'X Y')(0, G-S.imag)
+	MAX = namedtuple('MAX', 'X Y')(state.W-S.real, state.H)
+
 	def animate():
+		''' '''
+
 		# Calculate position
 		P, V, A, S, T = state.P, state.V, state.A, state.S, state.T
-			
+		
 		P = position(dt, state.P, state.V, state.A)
 		V += A*dt
 		T += dt
@@ -125,19 +155,26 @@ def closure(state):
 		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
 		# TODO: See if the Canvas has a hidden white border
 		# TODO: Work out when the collision occurs, don't just reset
-		if (P+S).imag <= G:
-			V = (V.real+abs(V.imag)*1j) # Collide with ground
-			P = P.real+(G-S.imag)*1j
-		elif P.imag >= state.H:
-			V = (V.real-abs(V.imag)*1j) # Collide with 'ceiling'
-			P = P.real+state.H*1j
+		if P.imag <= MIN.Y:
+			print('ground')
+			#V = V.conjugate()
+			V = V.real+abs(V.imag)*1j # Collide with ground
+			P = P.real+MIN.Y*1j
+		elif P.imag >= MAX.Y:
+			print('ceiling')
+			V = V.conjugate()
+			#V = V.real-abs(V.imag)*1j # Collide with 'ceiling'
+			P = P.real+MAX.Y*1j
 
-		if P.real <= 0:
-			V = (abs(V.real)+V.imag*1j) # Collide with ground
-			P = 0+P.imag*1j
-		elif (P+S).real >= state.W:
-			V = (-abs(V.real)+V.imag*1j) # Collide with ground
-			P = (state.W-S.real)+P.imag*1j
+		if P.real <= MIN.X:
+			print('left')
+			V = abs(V.real)+V.imag*1j # Collide with left edge
+			P = MIN.X+P.imag*1j
+		elif P.real >= MAX.X:
+			print('right')
+			V = -abs(V.real)+V.imag*1j # Collide with right edge
+			P =  MAX.X+P.imag*1j
+
 		#print('X=%.2fm, Y=%.2fm (T=%.2fs)' % (P.real, P.imag, T))
 		
 		# Redraw
@@ -145,13 +182,17 @@ def closure(state):
 		state.P, state.V, state.A, state.S, state.T = P, V, A, S, T
 
 		# Plot
-		ID = canvas.create_oval(state.pointToScreenCoords(P)+state.pointToScreenCoords(P+0.02-0.02j), fill='black')
-		window.after(1000, lambda: canvas.delete(ID))
+		# TODO: Reuse items (✓)
+		movePoint(next(plot), *state.pointToScreenCoords(P))
 
-		#
-		window.after(int(dt*1000), animate) # Schedule the next frame, in dt * 1000 milliseconds
+	def wrapper():
+		''' '''
+		# Check if paused
+		if not window.PAUSE:
+			animate()
+		window.after(int(dt*1000), wrapper) # Schedule the next frame, in dt * 1000 milliseconds
 
-	return animate
+	return wrapper
 
 closure(state)()
 
