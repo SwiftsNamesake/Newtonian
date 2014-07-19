@@ -41,16 +41,20 @@ class AnimationState:
 		# TODO: Rename (?)
 		return (int((point.real-self.O.real)*self.s.real), int((point.imag-self.O.imag)*self.s.imag)) # TODO: Allow X origin offset (✓)
 
+
 	def pointToWorldCoords(self, point):
 		''' Converts from canvas space to world space '''
 		# TODO: Rename (?)
 		return ((point.real/self.s.real)+self.O.real, (point.imag/self.s.imag)+self.O.imag)
 
+
 	def toScreen(self, point):
 		return self.pointToScreenCoords(point)
 
+
 	def toWorld(self, point):
 		return self.pointToWorldCoords(point)
+
 
 	def centre(self, point, size):
 		''' Calculates centre from point and size vector '''
@@ -87,7 +91,8 @@ V = 2.06+2.6j	# Velocity vector (m/s)
 
 FPS = 30 	  # Frames per second
 dt  = 1.0/FPS # Time between consecutive frames (s)
-# TODO: Decouple real dt and simulation dt (?)
+dtS = 1.0 	  # Scale of dt
+# TODO: Decouple real dt and simulation dt (?) (...)
 
 state = AnimationState(P, V, A, S, O, W, H)
 
@@ -102,20 +107,27 @@ ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
 
 
 def clickClosure():
-	text = canvas.create_text((0,0), text='', anchor=tk.SW)
+	''' Encapsulates data required by the callback '''
+	axisX = canvas.create_line((0, 0, width, 0), width=3, fill='purple')
+	axisY = canvas.create_line((0, 0, 0, height), width=3, fill='green')
+	text = canvas.create_text((10,10), text='', anchor=tk.NW, font='Monospace 10')
+
 	def showCoords(event):
-		''' Prints world and screen coordinates '''
+		''' Prints world and screen coordinates as well as displaying the axes intersecting the cursor '''
 		world = state.pointToWorldCoords(event.x+event.y*1j)
 		prev = canvas.coords(text)
 
-		msg  = 'World  | X={:.2f}m, Y={:.2f}m\nScreen | X={:d}px,    Y={:d}px'.format(world[0], world[1], event.x, event.y)
-		canvas.itemconfig(text, text=msg) # TODO: Make them line up
-		canvas.move(text, event.x-prev[0], event.y-prev[1])
+		# TODO: Make them line up (...)
+		msg  = 'World   | X={:<8}Y={:.2f}m\nScreen | X={:<8}Y={:d}px'.format('{:.2f}m,'.format(world[0]), world[1], '{:d}px,'.format(event.x), event.y)
+		canvas.itemconfig(text, text=msg)
+		#canvas.move(text, event.x-prev[0], event.y-prev[1])
 		
-		prev = canvas.bbox(text)
+		canvas.coords(axisX, (event.x, 0, event.x, height))  # Parallel with Y-axis
+		canvas.coords(axisY, (0, event.y, width, event.y)) # Parallel with X-axis
 
-		anch = (tk.N if event.y < (prev[3]-prev[1]) else tk.S) + (tk.E if width-event.x < (prev[2]-prev[0]) else tk.W)
-		canvas.itemconfig(text, anchor=anch)
+		#prev = canvas.bbox(text)
+		#anch = (tk.N if event.y < (prev[3]-prev[1]) else tk.S) + (tk.E if width-event.x < (prev[2]-prev[0]) else tk.W)
+		#canvas.itemconfig(text, anchor=anch)
 
 	return showCoords
 
@@ -182,9 +194,9 @@ def closure(state):
 		# Calculate position
 		P, V, A, S, T = state.P, state.V, state.A, state.S, state.T
 		
-		P = position(dt, state.P, state.V, state.A)
-		V += A*dt
-		T += dt
+		P = position(dt*dtS, state.P, state.V, state.A)
+		V += A*dt*dtS
+		T += dt*dtS
 
 		# Collisions
 		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
