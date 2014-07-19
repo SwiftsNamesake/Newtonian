@@ -7,7 +7,7 @@ from itertools import cycle
 
 from math import copysign
 
-size = width, height = 300, 300
+size = width, height = 720, 480
 
 window = tk.Tk()
 window.title('Newtonian')
@@ -19,7 +19,7 @@ canvas.pack()
 window.PAUSE = False
 
 class AnimationState:
-	def __init__(self, P, V, A, S, O):
+	def __init__(self, P, V, A, S, O, W, H):
 	#def __init__(self, P : 'Position vector', V : 'Velocity vector', A : 'Acceleration vector', S : 'Scale vector', O : 'Origin offset'):
 		# Physics
 		self.P = P 	 # Position vector
@@ -31,8 +31,8 @@ class AnimationState:
 		# Coordinates
 		
 		self.s = 100-100j 		# Scale (px/m)
-		self.W = abs(300/self.s.real)
-		self.H = abs(300/self.s.imag) # TODO: Convert to world coords (✓); Extract width and height
+		self.W = W
+		self.H = H # TODO: Convert to world coords (✓); Extract width and height (✓)
 		self.O = 0.0+self.H*1j 	# Offset (m) (world origin -> screen origin)
 
 
@@ -76,20 +76,20 @@ s = 100.0-100j 	# Scale vector (px/m) # TODO: Make this a vector too (✓)
 G = 0.2 		# Ground height (m)
 S = 0.2-0.2j 	# Size vector (distance from top left) (m)
 
-W = width/s.real  # TODO: Fix this value ?
-H = height/s.imag # TODO: Fix this value
+W = abs(width/s.real)  # TODO: Fix this value ?
+H = abs(height/s.imag) # TODO: Fix this value
 
 O = 0.0+H*1j 	# Offset between world origin and screen origin
 
 P = 0.15+0.8j	# Position vector (top left) (m)
 A = 0.00-9.82j 	# Acceleration vector (m/s^2)
-V = 1.06+5.6j	# Velocity vector (m/s)
+V = 2.06+2.6j	# Velocity vector (m/s)
 
 FPS = 30 	  # Frames per second
 dt  = 1.0/FPS # Time between consecutive frames (s)
 # TODO: Decouple real dt and simulation dt (?)
 
-state = AnimationState(P, V, A, S, O)
+state = AnimationState(P, V, A, S, O, W, H)
 
 ground 	= canvas.create_rectangle((0, height+int(G*s.imag), width, height), fill='green', width=0) # (left-X, top-Y, right-X, bottom-Y), fill colour, border width
 sky 	= canvas.create_rectangle((0, 0, width, height+int(G*s.imag)), fill='lightBlue', width=0)
@@ -153,16 +153,17 @@ def closure(state):
 	arrows = []
 
 	for index, vec in enumerate([(state.V, 'purple'), (state.A, 'green')]):
-		vertices = state.toScreen(state.centre(state.P,state.S))+state.toScreen(state.P+vec[0]/10)
-		xArrow   = canvas.create_line(vertices[:2]+(vertices[2], vertices[1]), arrow=tk.LAST, fill=vec[1])
-		yArrow   = canvas.create_line(vertices[:2]+(vertices[0], vertices[3]), arrow=tk.LAST, fill=vec[1])
+		vertices = state.toScreen(state.centre(state.P,state.S))+state.toScreen(state.centre(state.P,state.S)+vec[0]/10)
+		xArrow   = canvas.create_line(vertices[:2]+(vertices[2], vertices[1]), arrow=tk.LAST, fill=vec[1]) # X component
+		yArrow   = canvas.create_line(vertices[:2]+(vertices[0], vertices[3]), arrow=tk.LAST, fill=vec[1]) # Y component
+		
 		legend	 = canvas.create_line((width-30, 30+index*15, width-10, 30+index*15), fill=vec[1], width=6, capstyle=tk.ROUND)
 		label	 = canvas.create_text((width-45, 30+index*15), text=('V', 'A')[index], anchor=tk.CENTER)
 		arrows.append((xArrow, yArrow, legend, label)) # Append Canvas object IDs
 
 	def drawVector(IDs, vec):
 		P, S = state.P, state.S
-		vertices = state.toScreen(state.centre(P,S))+state.toScreen(P+vec/10)
+		vertices = state.toScreen(state.centre(P,S))+state.toScreen(state.centre(P,S)+vec/10)
 		canvas.coords(IDs[0], vertices[:2]+(vertices[2], vertices[1]))
 		canvas.coords(IDs[1], vertices[:2]+(vertices[0], vertices[3]))
 
