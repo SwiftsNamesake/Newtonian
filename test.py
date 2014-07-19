@@ -46,7 +46,14 @@ class AnimationState:
 		# TODO: Rename (?)
 		return ((point.real/self.s.real)+self.O.real, (point.imag/self.s.imag)+self.O.imag)
 
+	def toScreen(self, point):
+		return self.pointToScreenCoords(point)
+
+	def toWorld(self, point):
+		return self.pointToWorldCoords(point)
+
 	def worldToScreen(self):
+		''' '''
 		# TODO: Implement world-space to screen space method (✓)
 		# TODO: Allow rotated coordinate systems (?)
 		TOPLEFT = self.pointToScreenCoords(self.P)
@@ -112,8 +119,10 @@ def clickClosure():
 def pause(event):
 	window.PAUSE = not window.PAUSE
 
+
 window.bind('<Motion>', clickClosure())
 window.bind('<space>', pause)
+
 
 def position(t, p0, v0, a):
 	''' Calculates position as a function of time, based on initial position, initial velocity, and acceleration '''
@@ -128,12 +137,15 @@ def position(t, p0, v0, a):
 
 
 def closure(state):
+
 	''' '''
 
 	count = int(1.2/dt) # Delay / 
 	plot  = [ canvas.create_oval((-3,-3,0,0), fill='#022EEF', width=0) for x in range(count) ]
 	plot  = cycle(plot)
 
+	arrow = canvas.create_line(state.toScreen(state.P/10)+state.toScreen((state.P+state.V)/10), arrow=tk.LAST)
+	
 	def movePoint(point, x, y):
 		coords = canvas.coords(point)
 		canvas.move(point, x-coords[0], y-coords[1])
@@ -142,6 +154,7 @@ def closure(state):
 	MAX = namedtuple('MAX', 'X Y')(state.W-S.real, state.H)
 
 	def animate():
+
 		''' '''
 
 		# Calculate position
@@ -179,6 +192,8 @@ def closure(state):
 		
 		# Redraw
 		canvas.coords(ball, state.worldToScreen())
+		canvas.coords(arrow, state.toScreen(P)+state.toScreen(P+V/10))
+
 		state.P, state.V, state.A, state.S, state.T = P, V, A, S, T
 
 		# Plot
@@ -186,7 +201,7 @@ def closure(state):
 		movePoint(next(plot), *state.pointToScreenCoords(P))
 
 	def wrapper():
-		''' '''
+		''' Provides administrative logic for the animate() function '''
 		# Check if paused
 		if not window.PAUSE:
 			animate()
