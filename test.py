@@ -52,6 +52,10 @@ class AnimationState:
 	def toWorld(self, point):
 		return self.pointToWorldCoords(point)
 
+	def centre(self, point, size):
+		''' Calculates centre from point and size vector '''
+		return point+size/2
+
 	def worldToScreen(self):
 		''' '''
 		# TODO: Implement world-space to screen space method (✓)
@@ -68,7 +72,7 @@ class AnimationState:
 
 # TODO: Encapsulate coordinate system conversion logic (cf. AnimationState) (...)
 # TODO: Encapsulate animation and related parameters (cf. AnimationState)
-s = 100.0-100j 	# Scale vectpr (px/m) # TODO: Make this a vector too (✓)
+s = 100.0-100j 	# Scale vector (px/m) # TODO: Make this a vector too (✓)
 G = 0.2 		# Ground height (m)
 S = 0.2-0.2j 	# Size vector (distance from top left) (m)
 
@@ -144,8 +148,25 @@ def closure(state):
 	plot  = [ canvas.create_oval((-3,-3,0,0), fill='#022EEF', width=0) for x in range(count) ]
 	plot  = cycle(plot)
 
-	arrow = canvas.create_line(state.toScreen(state.P/10)+state.toScreen((state.P+state.V)/10), arrow=tk.LAST)
+	#arrow = canvas.create_line(state.toScreen(state.P/10)+state.toScreen((state.P+state.V)/10), arrow=tk.LAST)
 	
+	arrows = []
+
+	for index, vec in enumerate([(state.V, 'purple'), (state.A, 'green')]):
+		vertices = state.toScreen(state.centre(state.P,state.S))+state.toScreen(state.P+vec[0]/10)
+		xArrow   = canvas.create_line(vertices[:2]+(vertices[2], vertices[1]), arrow=tk.LAST, fill=vec[1])
+		yArrow   = canvas.create_line(vertices[:2]+(vertices[0], vertices[3]), arrow=tk.LAST, fill=vec[1])
+		legend	 = canvas.create_line((width-30, 30+index*15, width-10, 30+index*15), fill=vec[1], width=6, capstyle=tk.ROUND)
+		label	 = canvas.create_text((width-45, 30+index*15), text=('V', 'A')[index], anchor=tk.CENTER)
+		arrows.append((xArrow, yArrow, legend, label)) # Append Canvas object IDs
+
+	def drawVector(IDs, vec):
+		P, S = state.P, state.S
+		vertices = state.toScreen(state.centre(P,S))+state.toScreen(P+vec/10)
+		canvas.coords(IDs[0], vertices[:2]+(vertices[2], vertices[1]))
+		canvas.coords(IDs[1], vertices[:2]+(vertices[0], vertices[3]))
+
+
 	def movePoint(point, x, y):
 		coords = canvas.coords(point)
 		canvas.move(point, x-coords[0], y-coords[1])
@@ -192,13 +213,18 @@ def closure(state):
 		
 		# Redraw
 		canvas.coords(ball, state.worldToScreen())
-		canvas.coords(arrow, state.toScreen(P)+state.toScreen(P+V/10))
+		
+		for IDs, vec in zip(arrows, (V, A)):
+			drawVector(IDs, vec)
+
+		#canvas.coords(arrow, state.toScreen(state.centre(P,S))+state.toScreen(P+V/10))
+		
+		movePoint(next(plot), *state.toScreen(state.centre(P,S)))
 
 		state.P, state.V, state.A, state.S, state.T = P, V, A, S, T
 
 		# Plot
 		# TODO: Reuse items (✓)
-		movePoint(next(plot), *state.pointToScreenCoords(P))
 
 	def wrapper():
 		''' Provides administrative logic for the animate() function '''
