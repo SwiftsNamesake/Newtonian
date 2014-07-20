@@ -2,9 +2,10 @@
 
 import tkinter as tk
 
-from collections import namedtuple
-from itertools import cycle
+from collections import namedtuple	#
+from itertools import cycle			# Used for iterating over plot points
 
+from cmath import polar, rect, pi as π
 from math import copysign
 
 size = width, height = 720, 480
@@ -141,13 +142,23 @@ def clickClosure():
 
 	return showCoords
 
+ball.selected = False
 
 def pause(event):
 	window.PAUSE = not window.PAUSE
 
+def move(event):
+	if ball.selected:
+		state.P = complex(*state.toWorld(event.x+event.y*1j))
+
+def setSelected(selected):
+	ball.selected = selected
 
 window.bind('<Motion>', clickClosure())
 window.bind('<space>', pause)
+#canvas.tag_bind(ball, '<Button-1>', move)
+window.bind('<Button-1>', move)
+
 
 
 def position(t, p0, v0, a):
