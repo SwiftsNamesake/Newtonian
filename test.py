@@ -6,7 +6,7 @@ from collections import namedtuple	#
 from itertools import cycle			# Used for iterating over plot points
 
 from cmath import polar, rect, pi as π
-from math import copysign
+from math import copysign, sqrt, sin
 
 size = width, height = 720, 480
 
@@ -93,11 +93,12 @@ O = 0.0+H*1j 	# Offset between world origin and screen origin
 
 P = 0.15+0.8j	# Position vector (top left) (m)
 A = 0.00-9.82j 	# Acceleration vector (m/s^2)
-V = 2.06+2.6j	# Velocity vector (m/s)
+#V = 2.06+2.6j	# Velocity vector (m/s)
+V = rect(2.0, 20*π/180.0)
 
 FPS = 30 	  # Frames per second
 dt  = 1.0/FPS # Time between consecutive frames (s)
-dtS = 1.0 	  # Scale of dt
+dtS = 0.2 	  # Scale of dt
 # TODO: Decouple real dt and simulation dt (?) (...)
 
 state = AnimationState(P, V, A, S, O, W, H)
@@ -114,8 +115,8 @@ ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
 
 def clickClosure():
 	''' Encapsulates data required by the callback '''
-	axisX = canvas.create_line((0, 0, width, 0), width=3, fill='red')
-	axisY = canvas.create_line((0, 0, 0, height), width=3, fill='blue')
+	#axisX = canvas.create_line((0, 0, width, 0), width=3, fill='red')
+	#axisY = canvas.create_line((0, 0, 0, height), width=3, fill='blue')
 	text = canvas.create_text((10,10), text='', anchor=tk.NW, font='Monospace 10')
 
 	follow = False # Let the coordinates follow the cursor
@@ -132,8 +133,8 @@ def clickClosure():
 		canvas.itemconfig(text, text=msg)
 		#canvas.move(text, event.x-prev[0], event.y-prev[1])
 		
-		canvas.coords(axisX, (event.x, 0, event.x, height))  # Parallel with Y-axis
-		canvas.coords(axisY, (0, event.y, width, event.y)) # Parallel with X-axis
+		#canvas.coords(axisX, (event.x, 0, event.x, height))  # Parallel with Y-axis
+		#canvas.coords(axisY, (0, event.y, width, event.y)) # Parallel with X-axis
 
 		if follow:
 			prev = canvas.bbox(text)
@@ -142,22 +143,27 @@ def clickClosure():
 
 	return showCoords
 
-ball.selected = False
+state.selected = False
 
 def pause(event):
 	window.PAUSE = not window.PAUSE
 
 def move(event):
-	if ball.selected:
+	if state.selected:
+		print('moving')
 		state.P = complex(*state.toWorld(event.x+event.y*1j))
+		canvas.coords(ball, state.worldToScreen())
 
-def setSelected(selected):
-	ball.selected = selected
+def toggleSelected(selected):
+	print('toggle select')
+	state.selected = not state.selected
+	window.PAUSE = not window.PAUSE
 
 window.bind('<Motion>', clickClosure())
 window.bind('<space>', pause)
-#canvas.tag_bind(ball, '<Button-1>', move)
-window.bind('<Button-1>', move)
+canvas.tag_bind(ball, '<Button-1>', toggleSelected)
+canvas.tag_bind(ball, '<ButtonRelease-1>', toggleSelected)
+window.bind('<Motion>', move)
 
 
 
@@ -171,6 +177,13 @@ def position(t, p0, v0, a):
 		return (pos + vel*t + (1/2)*acc*t**2)
 
 	return p(p0.real, v0.real, a.real)+p(p0.imag, v0.imag, a.imag)*1j # x + yi
+
+
+def tCollision(dy, V, A):
+	''' Calculates time until collision occurs with ground '''
+	#dt = sqrt(2*dy/abs(A.imag)) + 2*V.imag/abs(A.imag)
+	dt = -V.imag/A.imag + sqrt((V.imag**2/A.imag-2*dy)/A.imag)
+	return dt
 
 
 def closure(state):
@@ -195,6 +208,7 @@ def closure(state):
 		label	 = canvas.create_text((width-45, 30+index*15), text=('V', 'A')[index], anchor=tk.CENTER)
 		arrows.append((xArrow, yArrow, legend, label)) # Append Canvas object IDs
 
+
 	def drawVector(IDs, vec):
 		P, S = state.P, state.S
 		vertices = state.toScreen(state.centre(P,S))+state.toScreen(state.centre(P,S)+vec/10)
@@ -206,16 +220,26 @@ def closure(state):
 		coords = canvas.coords(point)
 		canvas.move(point, x-coords[0], y-coords[1])
 
-	MIN = namedtuple('MIN', 'X Y')(0, G-S.imag)
-	MAX = namedtuple('MAX', 'X Y')(state.W-S.real, state.H)
+	MIN = namedtuple('MIN', 'X Y')(0, G-S.imag)				# TODO: Make this a vector instead (?)
+	MAX = namedtuple('MAX', 'X Y')(state.W-S.real, state.H)	# TODO: Make this a vector instead (?)
 
 	def animate():
 
 		''' '''
 
 		# Calculate position
-		P, V, A, S, T = state.P, state.V, state.A, state.S, state.T
+		P, V, A, S, T = state.P, state.V, state.A, state.S, state.T # Unpack state
 		
+
+		# TODO: Check collisions this way for all edges
+		tCol = tCollision(P.imag-MIN.Y, V, A) # Time until collision with ground (experimental)
+		
+		if tCol < dt*dtS:
+			# We will collide within this frame
+			P = P.real+MIN.Y*1j
+			print('%.2fs|%.2fm' % (tCol, P.imag+S.imag-G))
+
+		# Update position, velocity, timn
 		P = position(dt*dtS, state.P, state.V, state.A)
 		V += A*dt*dtS
 		T += dt*dtS
@@ -226,23 +250,24 @@ def closure(state):
 		# TODO: Work out when the collision occurs, don't just reset
 		# NOTE: We're giving the ball energy when we're adjusting it's position after a collision.
 		# This seems to be the cause of the mysteriously increasing Y-velocity.
+
 		if P.imag <= MIN.Y:
-			print('ground')
+			#print('ground')
 			#V = V.conjugate()
 			V = V.real+abs(V.imag)*1j # Collide with ground
 			P = P.real+MIN.Y*1j
 		elif P.imag >= MAX.Y:
-			print('ceiling')
+			#print('ceiling')
 			#V = V.conjugate()
 			V = V.real-abs(V.imag)*1j # Collide with 'ceiling'
 			P = P.real+MAX.Y*1j
 
 		if P.real <= MIN.X:
-			print('left')
+			#print('left')
 			V = abs(V.real)+V.imag*1j # Collide with left edge
 			P = MIN.X+P.imag*1j
 		elif P.real >= MAX.X:
-			print('right')
+			#print('right')
 			V = -abs(V.real)+V.imag*1j # Collide with right edge
 			P =  MAX.X+P.imag*1j
 
@@ -251,8 +276,6 @@ def closure(state):
 		# Redraw
 		canvas.coords(ball, state.worldToScreen())
 		
-		print(V)
-
 		for IDs, vec in zip(arrows, (V, A)):
 			drawVector(IDs, vec)
 
@@ -274,6 +297,7 @@ def closure(state):
 
 	return wrapper
 
-closure(state)()
+state.animator = closure(state)
+state.animator()
 
 window.mainloop()
