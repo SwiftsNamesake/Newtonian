@@ -19,6 +19,11 @@ canvas.pack()
 window.PAUSE = False
 
 class AnimationState:
+
+	''' '''
+
+	# TODO: Facilities for pretty printing simulation state (translucent tk.Text?)
+
 	def __init__(self, P, V, A, S, O, W, H):
 	#def __init__(self, P : 'Position vector', V : 'Velocity vector', A : 'Acceleration vector', S : 'Scale vector', O : 'Origin offset'):
 		# Physics
@@ -120,7 +125,7 @@ def clickClosure():
 		prev = canvas.coords(text)
 
 		# TODO: Make them line up (...)
-		msg  = 'World   | X={:<8}Y={:.2f}m\nScreen | X={:<8}Y={:d}px'.format('{:.2f}m,'.format(world[0]), world[1], '{:d}px,'.format(event.x), event.y)
+		msg  = 'World   | X={:<8}Y={:.2f}m\nScreen | X={:<8}Y={:d}px\n'.format('{:.2f}m,'.format(world[0]), world[1], '{:d}px,'.format(event.x), event.y)
 		#ln1 = '|X={:<10}|'.format('{:.2f}m,'.format(world[0]))
 		#ln2 = '|X={:<11}|'.format('{:d}px,'.format(event.x))
 		canvas.itemconfig(text, text=msg)
@@ -169,8 +174,9 @@ def closure(state):
 	
 	arrows = []
 
+	# Construct vector lines and legend from list of vectors and associated colours
 	for index, vec in enumerate([(state.V, 'purple'), (state.A, 'green')]):
-		vertices = state.toScreen(state.centre(state.P,state.S))+state.toScreen(state.centre(state.P,state.S)+vec[0]/10)
+		vertices = state.toScreen(state.centre(state.P,state.S))+state.toScreen(state.centre(state.P,state.S)+vec[0]/10) # Tuple of endpoint coordinates
 		xArrow   = canvas.create_line(vertices[:2]+(vertices[2], vertices[1]), arrow=tk.LAST, fill=vec[1]) # X component
 		yArrow   = canvas.create_line(vertices[:2]+(vertices[0], vertices[3]), arrow=tk.LAST, fill=vec[1]) # Y component
 		
@@ -214,8 +220,8 @@ def closure(state):
 			P = P.real+MIN.Y*1j
 		elif P.imag >= MAX.Y:
 			print('ceiling')
-			V = V.conjugate()
-			#V = V.real-abs(V.imag)*1j # Collide with 'ceiling'
+			#V = V.conjugate()
+			V = V.real-abs(V.imag)*1j # Collide with 'ceiling'
 			P = P.real+MAX.Y*1j
 
 		if P.real <= MIN.X:
@@ -232,6 +238,8 @@ def closure(state):
 		# Redraw
 		canvas.coords(ball, state.worldToScreen())
 		
+		print(V)
+
 		for IDs, vec in zip(arrows, (V, A)):
 			drawVector(IDs, vec)
 
