@@ -108,9 +108,11 @@ ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
 
 def clickClosure():
 	''' Encapsulates data required by the callback '''
-	axisX = canvas.create_line((0, 0, width, 0), width=3, fill='purple')
-	axisY = canvas.create_line((0, 0, 0, height), width=3, fill='green')
+	axisX = canvas.create_line((0, 0, width, 0), width=3, fill='red')
+	axisY = canvas.create_line((0, 0, 0, height), width=3, fill='blue')
 	text = canvas.create_text((10,10), text='', anchor=tk.NW, font='Monospace 10')
+
+	follow = False # Let the coordinates follow the cursor
 
 	def showCoords(event):
 		''' Prints world and screen coordinates as well as displaying the axes intersecting the cursor '''
@@ -119,15 +121,18 @@ def clickClosure():
 
 		# TODO: Make them line up (...)
 		msg  = 'World   | X={:<8}Y={:.2f}m\nScreen | X={:<8}Y={:d}px'.format('{:.2f}m,'.format(world[0]), world[1], '{:d}px,'.format(event.x), event.y)
+		#ln1 = '|X={:<10}|'.format('{:.2f}m,'.format(world[0]))
+		#ln2 = '|X={:<11}|'.format('{:d}px,'.format(event.x))
 		canvas.itemconfig(text, text=msg)
 		#canvas.move(text, event.x-prev[0], event.y-prev[1])
 		
 		canvas.coords(axisX, (event.x, 0, event.x, height))  # Parallel with Y-axis
 		canvas.coords(axisY, (0, event.y, width, event.y)) # Parallel with X-axis
 
-		#prev = canvas.bbox(text)
-		#anch = (tk.N if event.y < (prev[3]-prev[1]) else tk.S) + (tk.E if width-event.x < (prev[2]-prev[0]) else tk.W)
-		#canvas.itemconfig(text, anchor=anch)
+		if follow:
+			prev = canvas.bbox(text)
+			anch = (tk.N if event.y < (prev[3]-prev[1]) else tk.S) + (tk.E if width-event.x < (prev[2]-prev[0]) else tk.W)
+			canvas.itemconfig(text, anchor=anch)
 
 	return showCoords
 
