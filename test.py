@@ -213,6 +213,8 @@ def closure(state):
 		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
 		# TODO: See if the Canvas has a hidden white border
 		# TODO: Work out when the collision occurs, don't just reset
+		# NOTE: We're giving the ball energy when we're adjusting it's position after a collision.
+		# This seems to be the cause of the mysteriously increasing Y-velocity.
 		if P.imag <= MIN.Y:
 			print('ground')
 			#V = V.conjugate()
