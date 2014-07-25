@@ -1,4 +1,19 @@
+#
+# test.py
+#
+# Jonatan H Sundqvist
+# Jayant Shivarajan
+# July 10 2014
+#
 # Showing Jay how to create windows with tkinter
+#
+
+# TODO | - Vector alias for complex numbers (?)
+#		 -
+
+# SPEC | - 
+#		 -
+
 
 import tkinter as tk
 
@@ -98,7 +113,7 @@ V = rect(2.0, 20*π/180.0)
 
 FPS = 30 	  # Frames per second
 dt  = 1.0/FPS # Time between consecutive frames (s)
-dtS = 0.2 	  # Scale of dt
+dtS = 1.0 	  # Scale of dt
 # TODO: Decouple real dt and simulation dt (?) (...)
 
 state = AnimationState(P, V, A, S, O, W, H)
@@ -145,8 +160,10 @@ def clickClosure():
 
 state.selected = False
 
+
 def pause(event):
 	window.PAUSE = not window.PAUSE
+
 
 def move(event):
 	if state.selected:
@@ -154,10 +171,12 @@ def move(event):
 		state.P = complex(*state.toWorld(event.x+event.y*1j))
 		canvas.coords(ball, state.worldToScreen())
 
+
 def toggleSelected(selected):
 	print('toggle select')
 	state.selected = not state.selected
 	window.PAUSE = not window.PAUSE
+
 
 window.bind('<Motion>', clickClosure())
 window.bind('<space>', pause)
@@ -179,11 +198,14 @@ def position(t, p0, v0, a):
 	return p(p0.real, v0.real, a.real)+p(p0.imag, v0.imag, a.imag)*1j # x + yi
 
 
-def tCollision(dy, V, A):
-	''' Calculates time until collision occurs with ground '''
+def timeUntil(P : 'vector', V : 'vector', A) -> 'vector':
+	''' Calculates time until object has reached 0 (separately for X and Y) '''
+	# TODO: Reaches a given point instead (?)
 	#dt = sqrt(2*dy/abs(A.imag)) + 2*V.imag/abs(A.imag)
-	dt = -V.imag/A.imag + sqrt((V.imag**2/A.imag-2*dy)/A.imag)
-	return dt
+	dtX = -V.real/A.real + sqrt((V.real**2/A.real-2*P.real)/A.real) if A.real != 0 else -P.real/V.real
+	dtY = -V.imag/A.imag + sqrt((V.imag**2/A.imag-2*P.imag)/A.imag) if A.imag != 0 else -P.imag/V.imag
+
+	return dtX+dtY*1j
 
 
 def closure(state):
@@ -231,15 +253,25 @@ def closure(state):
 		P, V, A, S, T = state.P, state.V, state.A, state.S, state.T # Unpack state
 		
 
-		# TODO: Check collisions this way for all edges
-		tCol = tCollision(P.imag-MIN.Y, V, A) # Time until collision with ground (experimental)
-		
-		if tCol < dt*dtS:
-			# We will collide within this frame
-			P = P.real+MIN.Y*1j
-			print('%.2fs|%.2fm' % (tCol, P.imag+S.imag-G))
+		# TODO: Check collisions this way for all edges (...)
+		tColMin = timeUntil(MIN.X+MIN.Y*1j, V, A)  # Top left
+		tColMax = timeUntil(MAX.X+MAX.Y*1j, V, A) # Bottom right
 
-		# Update position, velocity, timn
+		simDt = dt*dtS
+
+		for T in (tColMin.real, tColMin.imag, tColMax.real, tColMax.imag):
+			if 0 <= T < simDt:
+				# We will collide within this frame
+				pass
+				#print('DT: %.2f' % T)
+		#		# TODO: Solve by splitting animation frame into pre-collision, post-collision (?)
+		#		P = P.real+MIN.Y*1j
+		#		V = V.real+abs(V.imag)*1j # Collide with ground
+		#		#simDt += tCol
+			
+		print('%.2fs|%.2fm' % (tColMin.imag, P.imag+S.imag-G))
+
+		# Update position, velocity, time
 		P = position(dt*dtS, state.P, state.V, state.A)
 		V += A*dt*dtS
 		T += dt*dtS
@@ -248,7 +280,7 @@ def closure(state):
 		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
 		# TODO: See if the Canvas has a hidden white border
 		# TODO: Work out when the collision occurs, don't just reset
-		# NOTE: We're giving the ball energy when we're adjusting it's position after a collision.
+		# NOTE: We're giving the ball energy when we're adjusting its position after a collision.
 		# This seems to be the cause of the mysteriously increasing Y-velocity.
 
 		if P.imag <= MIN.Y:
