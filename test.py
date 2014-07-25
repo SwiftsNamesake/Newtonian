@@ -351,12 +351,19 @@ def closure(state):
 		# Redraw
 		canvas.coords(ball, state.worldToScreen())
 		
+		pentagon['vertices'] = rotateVertices(0.7*2*π*dt*dtS, pentagon['centre'], *pentagon['vertices'])
+		newCoords = ()
+		
+		for vertex in pentagon['vertices']:
+			newCoords += state.toScreen(vertex)
+		canvas.coords(pentagon['id'], newCoords)
+
 		for IDs, vec in zip(arrows, (V, A)):
 			drawVector(IDs, vec)
 
 		#canvas.coords(arrow, state.toScreen(state.centre(P,S))+state.toScreen(P+V/10))
 		
-		movePoint(next(plot), *state.toScreen(state.centre(P,S)))
+		movePoint(next(plot), *state.toScreen(state.centre(P,S)), fill=next(colours))
 
 		state.P, state.V, state.A, state.S, state.T = P, V, A, S, T
 
