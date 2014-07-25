@@ -1,5 +1,5 @@
 #
-# test.py
+# Newtonian - test.py
 #
 # Jonatan H Sundqvist
 # Jayant Shivarajan
@@ -16,6 +16,8 @@
 
 
 import tkinter as tk
+
+from utilities import *
 
 from collections import namedtuple	#
 from itertools import cycle			# Used for iterating over plot points
@@ -42,18 +44,26 @@ class AnimationState:
 
 	def __init__(self, P, V, A, S, O, W, H):
 	#def __init__(self, P : 'Position vector', V : 'Velocity vector', A : 'Acceleration vector', S : 'Scale vector', O : 'Origin offset'):
+
+		'''
+		Doc goes here
+
+		'''
+
 		# Physics
 		self.P = P 	 # Position vector
 		self.V = V 	 # Velocity vector
 		self.A = A 	 # Acceleration vector
-		self.S = S 	 # Size vector # TODO: Make this a real vector (ie invert Y)
-		self.T = 0.0 # Time
+		self.S = S 	 # Size vector # TODO: Make this a real vector (ie. invert Y)
+		
+		# General
+		self.T  = 0.0 # Time
+		self.TS = 1.0 # Time scale (simulation time/real time)
 
 		# Coordinates
-		
-		self.s = 100-100j 		# Scale (px/m)
-		self.W = W
-		self.H = H # TODO: Convert to world coords (✓); Extract width and height (✓)
+		self.s = 100-100j 		# Scale (px/m) # TODO: Do not hard-code this value
+		self.W = W 				# Width of world
+		self.H = H 				# Height of world TODO: Convert to world coords (✓); Extract width and height (✓)
 		self.O = 0.0+self.H*1j 	# Offset (m) (world origin -> screen origin)
 
 
@@ -66,6 +76,7 @@ class AnimationState:
 	def pointToWorldCoords(self, point):
 		''' Converts from canvas space to world space '''
 		# TODO: Rename (?)
+		# TODO: Return vector (?)
 		return ((point.real/self.s.real)+self.O.real, (point.imag/self.s.imag)+self.O.imag)
 
 
@@ -81,11 +92,13 @@ class AnimationState:
 		''' Calculates centre from point and size vector '''
 		return point+size/2
 
+
 	def worldToScreen(self):
 		''' '''
 		# TODO: Implement world-space to screen space method (✓)
 		# TODO: Allow rotated coordinate systems (?)
-		TOPLEFT = self.pointToScreenCoords(self.P)
+		# TODO: Clean this up, add docstring
+		TOPLEFT 	= self.pointToScreenCoords(self.P)
 		BOTTOMRIGHT = self.pointToScreenCoords(self.P+self.S)
 		#screen = ((P.real+self.O.real)*s.real, (P.imag+self.O.imag)*s.imag, (P.real+S.real+self.O.imag)*s.real, (P.imag+S.imag+self.O.real)*s.imag)
 		screen = TOPLEFT + BOTTOMRIGHT
@@ -97,7 +110,7 @@ class AnimationState:
 
 # TODO: Encapsulate coordinate system conversion logic (cf. AnimationState) (...)
 # TODO: Encapsulate animation and related parameters (cf. AnimationState)
-s = 100.0-100j 	# Scale vector (px/m) # TODO: Make this a vector too (✓)
+s = 100-100j 	# Scale vector (px/m) # TODO: Make this a vector too (✓)
 G = 0.2 		# Ground height (m)
 S = 0.2-0.2j 	# Size vector (distance from top left) (m)
 
@@ -106,10 +119,10 @@ H = abs(height/s.imag) # TODO: Fix this value
 
 O = 0.0+H*1j 	# Offset between world origin and screen origin
 
-P = 0.15+0.8j	# Position vector (top left) (m)
+P = 0.15+1.8j	# Position vector (top left) (m)
 A = 0.00-9.82j 	# Acceleration vector (m/s^2)
+V = rect(2.5, 45*π/180.0)
 #V = 2.06+2.6j	# Velocity vector (m/s)
-V = rect(2.0, 20*π/180.0)
 
 FPS = 30 	  # Frames per second
 dt  = 1.0/FPS # Time between consecutive frames (s)
@@ -120,6 +133,14 @@ state = AnimationState(P, V, A, S, O, W, H)
 
 ground 	= canvas.create_rectangle((0, height+int(G*s.imag), width, height), fill='green', width=0) # (left-X, top-Y, right-X, bottom-Y), fill colour, border width
 sky 	= canvas.create_rectangle((0, 0, width, height+int(G*s.imag)), fill='lightBlue', width=0)
+
+pentagon = {
+	'centre': state.centre(0+0j, state.W+state.H*1j),
+	'vertices': polygon(0.6, 5, state.centre(0+0j, state.W+state.H*1j))
+}
+
+pentagon['id'] = canvas.create_polygon(tuple( state.toScreen(vertex) for vertex in pentagon['vertices']), fill='orange', width=4)
+
 ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
 
 #rect = namedtuple('Rect', 'left top right bottom, cx, cy, width, height')(P.real, P.imag, P.real+S.real, P.imag-S.imag, P.real+S.real/2, P.imag-S.imag/2, S.real, S.imag)
@@ -138,7 +159,7 @@ def clickClosure():
 
 	def showCoords(event):
 		''' Prints world and screen coordinates as well as displaying the axes intersecting the cursor '''
-		world = state.pointToWorldCoords(event.x+event.y*1j)
+		world = state.toWorld(event.x+event.y*1j)
 		prev = canvas.coords(text)
 
 		# TODO: Make them line up (...)
@@ -161,8 +182,31 @@ def clickClosure():
 state.selected = False
 
 
-def pause(event):
-	window.PAUSE = not window.PAUSE
+def pauseClosure():
+
+	#lockScreen = canvas.create_rectangle((0, 0, width, height), fill='#6666', alpha=0.6, state=tk.HIDDEN)
+	lockScreen = canvas.create_text((width//2, height//2), text='Paused', fill='#354E4C', state=tk.HIDDEN, anchor=tk.CENTER, font=('Helvetica 32'))
+
+	def fade(to, frm, frames):
+		# NOTE: Quick and dirty solution for fading in the Paused text
+		dR, dG, dB = (frm[0]-to[0])/frames, (frm[1]-to[1])/frames, (frm[2]-to[2])/frames
+		frames = ('#%.2x%.2x%.2x' % (to[0]+frame*dR, to[1]+frame*dG, to[2]+frame*dB) for frame in range(frames))
+		def nextFrame():
+			canvas.itemconfig(lockScreen, fill=next(frames))
+		return nextFrame
+
+	def togglePause(event):
+		window.PAUSE = not window.PAUSE
+		canvas.itemconfig(lockScreen, state=(tk.NORMAL if window.PAUSE else tk.HIDDEN))
+		canvas.lift(lockScreen)
+		if window.PAUSE:
+			FPS = 30
+			anim = fade((255,255,255), (0x35, 0x4E, 0x4C), FPS) # Animation callback
+			for frame in range(FPS):
+				# NOTE: Quick and dirty solution for fading in the Paused text
+				window.after(int(frame*1.0/FPS*1000), anim)
+
+	return togglePause
 
 
 def move(event):
@@ -175,37 +219,24 @@ def move(event):
 def toggleSelected(selected):
 	print('toggle select')
 	state.selected = not state.selected
-	window.PAUSE = not window.PAUSE
+	window.PAUSE   = not window.PAUSE
 
 
 window.bind('<Motion>', clickClosure())
-window.bind('<space>', pause)
+window.bind('<space>', pauseClosure())
 canvas.tag_bind(ball, '<Button-1>', toggleSelected)
 canvas.tag_bind(ball, '<ButtonRelease-1>', toggleSelected)
-window.bind('<Motion>', move)
+#window.bind('<Motion>', move)
 
 
-
-def position(t, p0, v0, a):
-	''' Calculates position as a function of time, based on initial position, initial velocity, and acceleration '''
-	# TOOD: Oxford comma (?)
-	# TODO: Better names (?)
-	# TODO: Explain proof (?)
-
-	def p(pos, vel, acc):
-		return (pos + vel*t + (1/2)*acc*t**2)
-
-	return p(p0.real, v0.real, a.real)+p(p0.imag, v0.imag, a.imag)*1j # x + yi
-
-
-def timeUntil(P : 'vector', V : 'vector', A) -> 'vector':
-	''' Calculates time until object has reached 0 (separately for X and Y) '''
-	# TODO: Reaches a given point instead (?)
-	#dt = sqrt(2*dy/abs(A.imag)) + 2*V.imag/abs(A.imag)
-	dtX = -V.real/A.real + sqrt((V.real**2/A.real-2*P.real)/A.real) if A.real != 0 else -P.real/V.real
-	dtY = -V.imag/A.imag + sqrt((V.imag**2/A.imag-2*P.imag)/A.imag) if A.imag != 0 else -P.imag/V.imag
-
-	return dtX+dtY*1j
+#def timeUntil(P : 'vector', V : 'vector', A) -> 'vector':
+#	''' Calculates time until object has reached 0 (separately for X and Y) '''
+#	# TODO: Reaches a given point instead (?)
+#	#dt = sqrt(2*dy/abs(A.imag)) + 2*V.imag/abs(A.imag)
+#	dtX = -V.real/A.real + sqrt((V.real**2/A.real-2*P.real)/A.real) if A.real != 0 else -P.real/V.real
+#	dtY = -V.imag/A.imag + sqrt((V.imag**2/A.imag-2*P.imag)/A.imag) if A.imag != 0 else -P.imag/V.imag
+#
+#	return dtX+dtY*1j
 
 
 def closure(state):
@@ -215,6 +246,9 @@ def closure(state):
 	count = int(1.2/dt) # Delay / 
 	plot  = [ canvas.create_oval((-3,-3,0,0), fill='#022EEF', width=0) for x in range(count) ]
 	plot  = cycle(plot)
+
+	colours = cycle([('#0000%.2x' % r) for r in range(0, 256, 8)])
+	#colours = cycle(['orange', 'black', 'purple', 'white', '#22CE4F', 'red', '#FC11CF'])
 
 	#arrow = canvas.create_line(state.toScreen(state.P/10)+state.toScreen((state.P+state.V)/10), arrow=tk.LAST)
 	
@@ -232,18 +266,27 @@ def closure(state):
 
 
 	def drawVector(IDs, vec):
+		''' '''
 		P, S = state.P, state.S
 		vertices = state.toScreen(state.centre(P,S))+state.toScreen(state.centre(P,S)+vec/10)
 		canvas.coords(IDs[0], vertices[:2]+(vertices[2], vertices[1]))
 		canvas.coords(IDs[1], vertices[:2]+(vertices[0], vertices[3]))
 
 
-	def movePoint(point, x, y):
+	def movePoint(point, x, y, **options):
+		''' '''
+		# TODO: Generic plotting capabilities
 		coords = canvas.coords(point)
 		canvas.move(point, x-coords[0], y-coords[1])
+		canvas.itemconfig(point, **options)
 
-	MIN = namedtuple('MIN', 'X Y')(0, G-S.imag)				# TODO: Make this a vector instead (?)
+
 	MAX = namedtuple('MAX', 'X Y')(state.W-S.real, state.H)	# TODO: Make this a vector instead (?)
+	MIN = namedtuple('MIN', 'X Y')(0, G-S.imag)				# TODO: Make this a vector instead (?)
+
+	# MIN = 0+(G-S.imag)*1j
+	# MAX = (state.W-S.real)+state.H*1j
+
 
 	def animate():
 
@@ -254,8 +297,8 @@ def closure(state):
 		
 
 		# TODO: Check collisions this way for all edges (...)
-		tColMin = timeUntil(MIN.X+MIN.Y*1j, V, A)  # Top left
-		tColMax = timeUntil(MAX.X+MAX.Y*1j, V, A) # Bottom right
+		tColMin = timeUntil(P, MIN.X+MIN.Y*1j, V, A)  # Top left
+		tColMax = timeUntil(P, MAX.X+MAX.Y*1j, V, A)  # Bottom right
 
 		simDt = dt*dtS
 
