@@ -47,9 +47,9 @@ def solveParabola(From : 'Real', To : 'Real', V : 'Real', A : 'Real') -> 'Real':
 	if (A == 0) and (V != 0):
 		# Not a parabola (linear equation)
 		#print('Linear equation')
-		return (From-To)/V
+		return -(From-To)/V
 	elif (A == 0) and (V == 0):
-		# Not a function (line parallel to X-axis)
+		# Not a function (line parallel or perpendicular to X-axis)
 		#print('Not a function')
 		return [-1, 0][From == To]
 	elif 2*(From-To)/A > (V/A)**2:

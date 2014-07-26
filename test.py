@@ -31,7 +31,8 @@ size = width, height = 720, 480
 
 window = tk.Tk()
 window.title('Newtonian')
-window.icon = PhotoImage(Image.open('apple.png'))
+photo = Image.open('apple.png')
+window.icon = PhotoImage(photo)
 window.call('wm', 'iconphoto', window._w, window.icon)
 window.geometry('%dx%d' % size)
 
@@ -123,8 +124,8 @@ H = abs(height/s.imag) # TODO: Fix this value
 
 O = 0.0+H*1j 	# Offset between world origin and screen origin
 
-P = 0.15+1.8j	# Position vector (top left) (m)
-A = 0.00-9.82j 	# Acceleration vector (m/s^2)
+P = 4.15+0.8j	# Position vector (top left) (m)
+A = 0.00+9.82j 	# Acceleration vector (m/s^2)
 V = rect(2.5, 45*π/180.0)
 #V = 2.06+2.6j	# Velocity vector (m/s)
 
@@ -145,7 +146,8 @@ pentagon = {
 
 pentagon['id'] = canvas.create_polygon(tuple( state.toScreen(vertex) for vertex in pentagon['vertices']), fill='orange', width=4)
 
-ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
+# ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
+ball = canvas.create_image(*state.worldToScreen()[:2], image=window.icon)
 
 #rect = namedtuple('Rect', 'left top right bottom, cx, cy, width, height')(P.real, P.imag, P.real+S.real, P.imag-S.imag, P.real+S.real/2, P.imag-S.imag/2, S.real, S.imag)
 #print('BALL\n')
@@ -315,8 +317,12 @@ def closure(state):
 		#		P = P.real+MIN.Y*1j
 		#		V = V.real+abs(V.imag)*1j # Collide with ground
 		#		#simDt += tCol
-			
-		print('%.2fs|%.2fm' % (tColMin.imag, P.imag+S.imag-G))
+		
+		# This statements are used for debugging timeUntil()
+		#print('%.2fs|%.2fm' % (tColMin.real, P.real))				# Left wall
+		#print('%.2fs|%.2fm' % (tColMin.imag, P.imag+S.imag-G))		# Ground
+		#print('%.2fs|%.2fm' % (tColMax.real, P.real+S.real))		# Right wall
+		#print('%.2fs|%.2fm' % (tColMax.imag, P.imag))				# Ceiling
 
 		# Update position, velocity, time
 		P = position(dt*dtS, state.P, state.V, state.A)
@@ -353,9 +359,10 @@ def closure(state):
 		#print('X=%.2fm, Y=%.2fm (T=%.2fs)' % (P.real, P.imag, T))
 		
 		# Redraw
-		canvas.coords(ball, state.worldToScreen())
+		#canvas.coords(ball, state.worldToScreen())
+		canvas.coords(ball, state.worldToScreen()[:2])
 		
-		pentagon['vertices'] = rotateVertices(0.7*2*π*dt*dtS, pentagon['centre'], *pentagon['vertices'])
+		pentagon['vertices'] = rotateVertices(0.2*2*π*dt*dtS, pentagon['centre'], *pentagon['vertices'])
 		newCoords = ()
 		
 		for vertex in pentagon['vertices']:
