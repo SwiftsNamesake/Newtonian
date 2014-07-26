@@ -10,7 +10,8 @@
 #
 
 # TODO | - Vector alias for complex numbers (?)
-#		 -
+#		 - Bounding boxes and tangents, non-rectangular collision-checks
+#		 - Extensive refactoring, break up into modules
 
 # SPEC | - 
 #		 -
