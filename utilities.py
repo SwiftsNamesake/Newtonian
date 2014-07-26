@@ -37,10 +37,11 @@ def solveParabola(From : 'Real', To : 'Real', V : 'Real', A : 'Real') -> 'Real':
 	Solves the specified parabola for T, even when any one of V and A is 0.
 	When the values of V and A are such that no solution exists, returns -1.
 	Negative values are otherwise meaningless in this context (although they might be
-	mathematically sound, since we are looking AHEAD in time.
+	mathematically sound), since we are looking AHEAD in time.
 	'''
 
 	# TODO: Clean this up, see if a more elegant solution exists
+	# TODO: Reference by notes, verify the equations
 
 	if (A == 0) and (V != 0):
 		# Not a parabola (linear equation)
