@@ -3,6 +3,7 @@
 #
 # Jonatan H Sundqvist
 # Jayant Shivarajan
+#
 # July 10 2014
 #
 # Showing Jay how to create windows with tkinter
@@ -27,19 +28,30 @@ from itertools import cycle			# Used for iterating over plot points
 from cmath import polar, rect, pi as π # Complex number functions and related constants
 from math import copysign, sqrt, sin   #
 
-size = width, height = 720, 480
 
-window = tk.Tk()
-window.title('Newtonian')
-photo = Image.open('apple.png')
-window.icon = PhotoImage(photo)
-window.call('wm', 'iconphoto', window._w, window.icon)
-window.geometry('%dx%d' % size)
+def createWindow(size):
 
-canvas = tk.Canvas(width=width, height=height, bd=0)
-canvas.pack()
+	''' '''
 
-window.PAUSE = False
+	# Create and configure window
+	window = tk.Tk()
+	window.title('Newtonian')
+	window.size = size.real, size.imag
+	window.geometry('%dx%d' % window.size)
+	
+	# Set icon
+	window.icon = PhotoImage(Image.open('apple.png'))
+	window.call('wm', 'iconphoto', window._w, window.icon)
+	
+	# Settings
+	window.PAUSE = False
+
+	# Create canvas
+	canvas = tk.Canvas(width=width, height=height, bd=0)
+	canvas.pack()
+
+	return window, canvas
+
 
 class AnimationState:
 
@@ -112,9 +124,15 @@ class AnimationState:
 		return screen
 
 
+# Create window and canvas
+size = 720+480j
+width, height = size.real, size.imag
+window, canvas = createWindow(size)
 
 # TODO: Encapsulate coordinate system conversion logic (cf. AnimationState) (...)
 # TODO: Encapsulate animation and related parameters (cf. AnimationState)
+
+# Coordinate system
 s = 100-100j 	# Scale vector (px/m) # TODO: Make this a vector too (✓)
 G = 0.2 		# Ground height (m)
 S = 0.2-0.2j 	# Size vector (distance from top left) (m)
@@ -124,11 +142,13 @@ H = abs(height/s.imag) # TODO: Fix this value
 
 O = 0.0+H*1j 	# Offset between world origin and screen origin
 
-P = 4.15+0.8j	# Position vector (top left) (m)
-A = 0.00+9.82j 	# Acceleration vector (m/s^2)
-V = rect(2.5, 45*π/180.0)
+# Physics
+P = 1.15+0.8j	# Position vector (top left) (m)
+A = 0.0-9.82j 	# Acceleration vector (m/s^2)
+V = rect(2.5, 45.0*π/180.0)
 #V = 2.06+2.6j	# Velocity vector (m/s)
 
+# Animation
 FPS = 30 	  # Frames per second
 dt  = 1.0/FPS # Time between consecutive frames (s)
 dtS = 1.0 	  # Scale of dt
@@ -296,7 +316,10 @@ def closure(state):
 
 	def animate():
 
-		''' '''
+		'''
+		Docstring goes here
+
+		'''
 
 		# Calculate position
 		P, V, A, S, T = state.P, state.V, state.A, state.S, state.T # Unpack state
@@ -318,11 +341,11 @@ def closure(state):
 		#		V = V.real+abs(V.imag)*1j # Collide with ground
 		#		#simDt += tCol
 		
-		# This statements are used for debugging timeUntil()
-		#print('%.2fs|%.2fm' % (tColMin.real, P.real))				# Left wall
-		#print('%.2fs|%.2fm' % (tColMin.imag, P.imag+S.imag-G))		# Ground
-		#print('%.2fs|%.2fm' % (tColMax.real, P.real+S.real))		# Right wall
-		#print('%.2fs|%.2fm' % (tColMax.imag, P.imag))				# Ceiling
+		# This statement is used for debugging timeUntil()
+		print('%.2fs|%.2fm' % { 'Left':    (tColMin.real, P.real),
+								'Ground':  (tColMin.imag, P.imag+S.imag-G),
+								'Right':   (tColMax.real, P.real+S.real),
+								'Ceiling': (tColMax.imag, P.imag) }['Left'])
 
 		# Update position, velocity, time
 		P = position(dt*dtS, state.P, state.V, state.A)

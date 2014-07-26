@@ -1,11 +1,19 @@
 #
-# utilities.py
+# Newtonian - utilities.py
 #
 # July 22 2014
 #
 # Jayant Shivarajan
 # Jonatan Sundqvist
 #
+# Vector utilities
+#
+
+# TODO | - 
+#		 -
+
+# SPEC | - 
+#		 -
 
 
 from cmath import polar, rect, pi as π
