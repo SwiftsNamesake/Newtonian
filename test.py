@@ -144,9 +144,9 @@ H = abs(height/s.imag) # TODO: Fix this value
 O = 0.0+H*1j 	# Offset between world origin and screen origin
 
 # Physics
-P = 0.15+0.8j	# Position vector (top left) (m)
+P = 2.35+2.8j	# Position vector (top left) (m)
 A = 0.0-9.82j 	# Acceleration vector (m/s^2)
-V = rect(5, 10.0*π/180.0)
+V = rect(3.6, 70.0*π/180.0)
 #V = 2.06+2.6j	# Velocity vector (m/s)
 
 # Animation
@@ -167,8 +167,8 @@ pentagon = {
 
 pentagon['id'] = canvas.create_polygon(tuple( state.toScreen(vertex) for vertex in pentagon['vertices']), fill='orange', width=4)
 
-# ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
-ball = canvas.create_image(*state.worldToScreen()[:2], image=window.icon)
+ball 	= canvas.create_oval(state.worldToScreen(), fill='red')
+# ball = canvas.create_image(*state.worldToScreen()[:2], image=window.icon)
 
 #rect = namedtuple('Rect', 'left top right bottom, cx, cy, width, height')(P.real, P.imag, P.real+S.real, P.imag-S.imag, P.real+S.real/2, P.imag-S.imag/2, S.real, S.imag)
 #print('BALL\n')
@@ -331,81 +331,77 @@ def closure(state):
 
 		'''
 
-		# Calculate position
 		P, V, A, S, T = state.P, state.V, state.A, state.S, state.T # Unpack state
 		
+		simDt = dt*dtS # Simulation dt
 
+		# Collisions
+
+		# TODO: See if the Canvas has a hidden white border
+		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
+		# TODO: Work out when the collision occurs, don't just reset (✓)
+		# NOTE: We're giving the ball energy when we're adjusting its position after a collision.
+		# This seems to be the cause of the mysteriously increasing Y-velocity. (solved)
+
+		# TODO: Handle edges cases (eg. multiple collisions within the same frame)
 		# TODO: Check collisions this way for all edges (...)
+		# TODO: Needs optimizing and simplifying once we're done
+
 		tColMin = timeUntil(P, MIN.X+MIN.Y*1j, V, A)  # Top left
 		tColMax = timeUntil(P, MAX.X+MAX.Y*1j, V, A)  # Bottom right
 
-		simDt = dt*dtS
+		xColMin = (0 <= tColMin.real <= simDt)
+		xColMax = (0 <= tColMax.real <= simDt)
 
-		if (0 <= tColMin.real <= simDt) or (0 <= tColMax.real <= simDt):
-			Px = 0
-			Vx = 0
+		yColMin = (0 <= tColMin.imag <= simDt)
+		yColMax = (0 <= tColMax.imag <= simDt)
+
+		if xColMin or xColMax:
+			# Collide
+			Tx = tColMax.real if xColMax else tColMin.real	# Time at collision
+			Px = axisPos(Tx, P.real, V.real, A.real) 		# Position at collision
+			Vx = -(V.real + A.real*Tx) 						# Velocity at collision (inverted when it bounces)
+
+			# Bounce
+			Px = axisPos(simDt-Tx, Px, Vx, A.real)
+			Vx = Vx + A.real*(simDt-Tx)
 		else:
-			pass
+			Px = axisPos(simDt, P.real, V.real, A.real)
+			Vx = V.real + A.real*simDt
 
-		if (0 <= tColMin.imag <= simDt) or (0 <= tColMax.imag <= simDt):
-			Py = 0
-			Vy = 0
+		if yColMin or yColMax:
+			# Collide
+			Ty = tColMax.imag if yColMax else tColMin.imag	# Time at collision
+			Py = axisPos(Ty, P.imag, V.imag, A.imag) 		# Position at collision
+			Vy = -(V.imag + A.imag*Ty) 						# Velocity at collision (inverted when it bounces)
+
+			# Bounce
+			Py = axisPos(simDt-Ty, Py, Vy, A.imag)
+			Vy = Vy + A.imag*(simDt-Ty)
 		else:
-			pass
-
-		#for T in (tColMin.real, tColMin.imag, tColMax.real, tColMax.imag):
-		#	if 0 <= T < simDt:
-		#		# We will collide within this frame
-		#		pass
-		#		#print('DT: %.2f' % T)
-		#		# TODO: Solve by splitting animation frame into pre-collision, post-collision (?)
-		#		P = P.real+MIN.Y*1j
-		#		V = V.real+abs(V.imag)*1j # Collide with ground
-		#		#simDt += tCol
+			Py = axisPos(simDt, P.imag, V.imag, A.imag)
+			Vy = V.imag + A.imag*simDt
 		
+
 		# This statement is used for debugging timeUntil()
 		print('%.2fs|%.2fm' % { 'Left':    (tColMin.real, P.real),
 								'Ground':  (tColMin.imag, P.imag+S.imag-G),
 								'Right':   (tColMax.real, P.real+S.real),
 								'Ceiling': (tColMax.imag, P.imag) }['Left'])
 
+
 		# Update position, velocity, time
-		P = position(dt*dtS, state.P, state.V, state.A)
-		V += A*dt*dtS
+		#P = position(dt*dtS, state.P, state.V, state.A)
+		#V += A*dt*dtS
+		P = Px+Py*1j
+		V = Vx+Vy*1j
 		T += dt*dtS
-
-		# Collisions
-		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
-		# TODO: See if the Canvas has a hidden white border
-		# TODO: Work out when the collision occurs, don't just reset
-		# NOTE: We're giving the ball energy when we're adjusting its position after a collision.
-		# This seems to be the cause of the mysteriously increasing Y-velocity.
-
-		if P.imag <= MIN.Y:
-			#print('ground')
-			#V = V.conjugate()
-			V = V.real+abs(V.imag)*1j # Collide with ground
-			P = P.real+MIN.Y*1j
-		elif P.imag >= MAX.Y:
-			#print('ceiling')
-			#V = V.conjugate()
-			V = V.real-abs(V.imag)*1j # Collide with 'ceiling'
-			P = P.real+MAX.Y*1j
-
-		if P.real <= MIN.X:
-			#print('left')
-			V = abs(V.real)+V.imag*1j # Collide with left edge
-			P = MIN.X+P.imag*1j
-		elif P.real >= MAX.X:
-			#print('right')
-			V = -abs(V.real)+V.imag*1j # Collide with right edge
-			P =  MAX.X+P.imag*1j
 
 		#print('X=%.2fm, Y=%.2fm (T=%.2fs)' % (P.real, P.imag, T))
 		
 		# Redraw
-		#canvas.coords(ball, state.worldToScreen())
-		canvas.coords(ball, state.worldToScreen()[:2])
+		canvas.coords(ball, state.worldToScreen())
+		# canvas.coords(ball, state.worldToScreen()[:2])
 		
 		pentagon['vertices'] = rotateVertices(0.2*2*π*dt*dtS, pentagon['centre'], *pentagon['vertices'])
 		newCoords = ()

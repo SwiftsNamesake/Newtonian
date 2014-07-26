@@ -53,19 +53,15 @@ def solveParabola(From : 'Real', To : 'Real', V : 'Real', A : 'Real') -> 'Real':
 
 	if (A == 0) and (V != 0):
 		# Not a parabola (linear equation)
-		#print('Linear equation')
 		return -(From-To)/V
 	elif (A == 0) and (V == 0):
 		# Not a function (line parallel or perpendicular to X-axis)
-		#print('Not a function')
 		return [-1, 0][From == To]
 	elif 2*(From-To)/A > (V/A)**2:
 		# Solution is imaginary
-		#print('No real solutions')
 		return -1
 	else:
 		# Function is a parabola and has a real solution
-		#print('Solvable')
 		return -V/A + sqrt((V/A)**2 - 2*(From-To)/A)
 
 	# return {
