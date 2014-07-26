@@ -37,15 +37,6 @@ def position(t : float, P0 : vector, V0 : vector, A : vector) -> vector:
 	return axisPos(t, P0.real, V0.real, A.real)+axisPos(t, P0.imag, V0.imag, A.imag)*1j # x + yi
 
 
-def tCollision(dy, V, A):
-	''' Calculates time until collision occurs with ground '''
-	# Deprecated; use timeUntil()
-	#dt = sqrt(2*dy/abs(A.imag)) + 2*V.imag/abs(A.imag)
-	dt = -V.imag/A.imag + sqrt((V.imag**2/A.imag-2*dy)/A.imag)
-
-	return dt
-
-
 def solveParabola(From : 'Real', To : 'Real', V : 'Real', A : 'Real') -> 'Real':
 
 	'''
