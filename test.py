@@ -15,20 +15,24 @@
 #		 -
 
 
-import tkinter as tk
+import tkinter as tk # Windows and events
 
-from utilities import *
+from PIL.ImageTk import PhotoImage, Image # Loading icons
 
-from collections import namedtuple	#
+from utilities import * # Vector utilities
+
+from collections import namedtuple	# 
 from itertools import cycle			# Used for iterating over plot points
 
-from cmath import polar, rect, pi as π
-from math import copysign, sqrt, sin
+from cmath import polar, rect, pi as π # Complex number functions and related constants
+from math import copysign, sqrt, sin   #
 
 size = width, height = 720, 480
 
 window = tk.Tk()
 window.title('Newtonian')
+window.icon = PhotoImage(Image.open('apple.png'))
+window.call('wm', 'iconphoto', window._w, window.icon)
 window.geometry('%dx%d' % size)
 
 canvas = tk.Canvas(width=width, height=height, bd=0)
