@@ -144,9 +144,9 @@ H = abs(height/s.imag) # TODO: Fix this value
 O = 0.0+H*1j 	# Offset between world origin and screen origin
 
 # Physics
-P = 1.15+0.8j	# Position vector (top left) (m)
+P = 0.15+0.8j	# Position vector (top left) (m)
 A = 0.0-9.82j 	# Acceleration vector (m/s^2)
-V = rect(2.5, 45.0*π/180.0)
+V = rect(5, 10.0*π/180.0)
 #V = 2.06+2.6j	# Velocity vector (m/s)
 
 # Animation
@@ -212,20 +212,29 @@ state.selected = False
 def pauseClosure():
 
 	#lockScreen = canvas.create_rectangle((0, 0, width, height), fill='#6666', alpha=0.6, state=tk.HIDDEN)
-	lockScreen = canvas.create_text((width//2, height//2), text='Paused', fill='#354E4C', state=tk.HIDDEN, anchor=tk.CENTER, font=('Helvetica 32'))
+	lockScreen = canvas.create_text((width//2, height//2), text='Paused', fill='#354E4C', state=tk.HIDDEN, anchor=tk.CENTER, font='Helvetica 32')
 
 	def fade(to, frm, frames):
 		# NOTE: Quick and dirty solution for fading in the Paused text
-		dR, dG, dB = (frm[0]-to[0])/frames, (frm[1]-to[1])/frames, (frm[2]-to[2])/frames
+
+		def delta(channel):
+			return (frm[channel]-to[channel])/frames
+
+		dR, dG, dB = delta(0), delta(1), delta(2)
 		frames = ('#%.2x%.2x%.2x' % (to[0]+frame*dR, to[1]+frame*dG, to[2]+frame*dB) for frame in range(frames))
+
 		def nextFrame():
 			canvas.itemconfig(lockScreen, fill=next(frames))
+
 		return nextFrame
 
+
 	def togglePause(event):
+
 		window.PAUSE = not window.PAUSE
-		canvas.itemconfig(lockScreen, state=(tk.NORMAL if window.PAUSE else tk.HIDDEN))
+		canvas.itemconfig(lockScreen, state=[tk.HIDDEN, tk.NORMAL][window.PAUSE])
 		canvas.lift(lockScreen)
+
 		if window.PAUSE:
 			FPS = 30
 			anim = fade((255,255,255), (0x35, 0x4E, 0x4C), FPS) # Animation callback
@@ -271,7 +280,7 @@ def closure(state):
 	''' '''
 
 	count = int(1.2/dt) # Delay / 
-	plot  = [ canvas.create_oval((-3,-3,0,0), fill='#022EEF', width=0) for x in range(count) ]
+	plot  = [canvas.create_oval((-3,-3,0,0), fill='#022EEF', width=0) for x in range(count)]
 	plot  = cycle(plot)
 
 	colours = cycle([('#0000%.2x' % r) for r in range(0, 256, 8)])
@@ -282,10 +291,10 @@ def closure(state):
 	arrows = []
 
 	# Construct vector lines and legend from list of vectors and associated colours
-	for index, vec in enumerate([(state.V, 'purple'), (state.A, 'green')]):
+	for index, vec in enumerate([(state.V, 'purple'), (state.A, 'orange')]):
 		vertices = state.toScreen(state.centre(state.P,state.S))+state.toScreen(state.centre(state.P,state.S)+vec[0]/10) # Tuple of endpoint coordinates
-		xArrow   = canvas.create_line(vertices[:2]+(vertices[2], vertices[1]), arrow=tk.LAST, fill=vec[1]) # X component
-		yArrow   = canvas.create_line(vertices[:2]+(vertices[0], vertices[3]), arrow=tk.LAST, fill=vec[1]) # Y component
+		xArrow   = canvas.create_line(vertices[:2]+(vertices[2], vertices[1]), arrow=tk.LAST, width=3, fill=vec[1]) # X component
+		yArrow   = canvas.create_line(vertices[:2]+(vertices[0], vertices[3]), arrow=tk.LAST, width=3, fill=vec[1]) # Y component
 		
 		legend	 = canvas.create_line((width-30, 30+index*15, width-10, 30+index*15), fill=vec[1], width=6, capstyle=tk.ROUND)
 		label	 = canvas.create_text((width-45, 30+index*15), text=('V', 'A')[index], anchor=tk.CENTER)
@@ -332,11 +341,23 @@ def closure(state):
 
 		simDt = dt*dtS
 
-		for T in (tColMin.real, tColMin.imag, tColMax.real, tColMax.imag):
-			if 0 <= T < simDt:
-				# We will collide within this frame
-				pass
-				#print('DT: %.2f' % T)
+		if (0 <= tColMin.real <= simDt) or (0 <= tColMax.real <= simDt):
+			Px = 0
+			Vx = 0
+		else:
+			pass
+
+		if (0 <= tColMin.imag <= simDt) or (0 <= tColMax.imag <= simDt):
+			Py = 0
+			Vy = 0
+		else:
+			pass
+
+		#for T in (tColMin.real, tColMin.imag, tColMax.real, tColMax.imag):
+		#	if 0 <= T < simDt:
+		#		# We will collide within this frame
+		#		pass
+		#		#print('DT: %.2f' % T)
 		#		# TODO: Solve by splitting animation frame into pre-collision, post-collision (?)
 		#		P = P.real+MIN.Y*1j
 		#		V = V.real+abs(V.imag)*1j # Collide with ground

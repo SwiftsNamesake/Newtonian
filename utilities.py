@@ -9,7 +9,7 @@
 # Vector utilities
 #
 
-# TODO | - 
+# TODO | - Consistent and readable naming scheme (cf. axisPos, position)
 #		 -
 
 # SPEC | - 
@@ -20,16 +20,21 @@ from cmath import polar, rect, pi as π
 from math import copysign, sqrt, sin
 
 
-def position(t, p0, v0, a):
+vector = complex
+
+
+def axisPos(t : float, P : float, V : float, A : float) -> float:
+	''' Calculates position on one axis '''
+	return P + V*t + (1/2)*A*t**2
+
+
+def position(t : float, P0 : vector, V0 : vector, A : vector) -> vector:
 	''' Calculates position as a function of time, based on initial position, initial velocity, and acceleration '''
 	# TOOD: Oxford comma (?)
 	# TODO: Better names (?)
 	# TODO: Explain proof (?)
 
-	def p(pos, vel, acc):
-		return (pos + vel*t + (1/2)*acc*t**2)
-
-	return p(p0.real, v0.real, a.real)+p(p0.imag, v0.imag, a.imag)*1j # x + yi
+	return axisPos(t, P0.real, V0.real, A.real)+axisPos(t, P0.imag, V0.imag, A.imag)*1j # x + yi
 
 
 def tCollision(dy, V, A):
@@ -80,7 +85,7 @@ def solveParabola(From : 'Real', To : 'Real', V : 'Real', A : 'Real') -> 'Real':
 	# }[(A == 0, V == 0, 2*(From-To)/A > (V/A)**2)]()
 
 
-def timeUntil(From : 'Vector', To : 'Vector', V : 'Vector', A : 'Vector') -> 'Vector':
+def timeUntil(From : vector, To : vector, V : vector, A : vector) -> vector:
 	
 	'''
 	Calculates time until a specific point is reached (separately for X and Y axis),
