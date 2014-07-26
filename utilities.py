@@ -41,6 +41,7 @@ def solveParabola(From : 'Real', To : 'Real', V : 'Real', A : 'Real') -> 'Real':
 	'''
 
 	# TODO: Clean this up, see if a more elegant solution exists
+	# TODO: Optimize, profiling
 	# TODO: Reference by notes, verify the equations
 
 	if (A == 0) and (V != 0):
@@ -60,12 +61,12 @@ def solveParabola(From : 'Real', To : 'Real', V : 'Real', A : 'Real') -> 'Real':
 		#print('Solvable')
 		return -V/A + sqrt((V/A)**2 - 2*(From-To)/A)
 
-
 	# return {
-	# 	'' : None,
-	# 	'' : None,
-	# 	'' : None
-	# }(P, V, A)
+	# 	(True, False, None) : (From-To)/V,
+	# 	(True, True, None)  : [-1, 0][From == To],
+	# 	(None, None, True)  : ,
+	#	(None, None, None)  :
+	# }[(A == 0, V == 0, 2*(From-To)/A > (V/A)**2)]()
 
 
 def timeUntil(From : 'Vector', To : 'Vector', V : 'Vector', A : 'Vector') -> 'Vector':
