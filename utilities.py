@@ -34,6 +34,7 @@ def position(t, p0, v0, a):
 
 def tCollision(dy, V, A):
 	''' Calculates time until collision occurs with ground '''
+	# Deprecated; use timeUntil()
 	#dt = sqrt(2*dy/abs(A.imag)) + 2*V.imag/abs(A.imag)
 	dt = -V.imag/A.imag + sqrt((V.imag**2/A.imag-2*dy)/A.imag)
 
@@ -41,11 +42,13 @@ def tCollision(dy, V, A):
 
 
 def solveParabola(From : 'Real', To : 'Real', V : 'Real', A : 'Real') -> 'Real':
+
 	'''
 	Solves the specified parabola for T, even when any one of V and A is 0.
 	When the values of V and A are such that no solution exists, returns -1.
 	Negative values are otherwise meaningless in this context (although they might be
-	mathematically sound), since we are looking AHEAD in time.
+	mathematically sound), since we are looking ahead in time.
+
 	'''
 
 	# TODO: Clean this up, see if a more elegant solution exists
@@ -82,10 +85,11 @@ def timeUntil(From : 'Vector', To : 'Vector', V : 'Vector', A : 'Vector') -> 'Ve
 	'''
 	Calculates time until a specific point is reached (separately for X and Y axis),
 	given the position, velocity, and acceleration.
+
 	'''
 
-	# TODO: Handle inputs with no solution (Infinity, negative numbers?) (...)
-	# TODO: Handle V=0 and A=0 (...)
+	# TODO: Handle inputs with no solution (Infinity, negative numbers?) (✓)
+	# TODO: Handle V=0 and A=0 (✓)
 
 	dtX = solveParabola(From.real, To.real, V.real, A.real)
 	dtY = solveParabola(From.imag, To.imag, V.imag, A.imag)
