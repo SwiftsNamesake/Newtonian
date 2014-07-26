@@ -21,7 +21,7 @@ from PIL.ImageTk import PhotoImage, Image # Loading icons
 
 from utilities import * # Vector utilities
 
-from collections import namedtuple	# 
+from collections import namedtuple	# Should probably be removed
 from itertools import cycle			# Used for iterating over plot points
 
 from cmath import polar, rect, pi as π # Complex number functions and related constants
