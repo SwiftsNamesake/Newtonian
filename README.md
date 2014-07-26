@@ -5,5 +5,5 @@ A minimalistic gravity simulator.
 
 ---------
 
-__Jonatan H Sundqvist__
-__Jayant Shivarajan__
+___Jonatan H Sundqvist___  
+___Jayant Shivarajan___  
