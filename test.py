@@ -144,9 +144,9 @@ H = abs(height/s.imag) # TODO: Fix this value
 O = 0.0+H*1j 	# Offset between world origin and screen origin
 
 # Physics
-P = 2.35+2.8j	# Position vector (top left) (m)
+P = 0.35+1.8j	# Position vector (top left) (m)
 A = 0.0-9.82j 	# Acceleration vector (m/s^2)
-V = rect(3.6, 70.0*π/180.0)
+V = rect(3.6, 20.0*π/180.0)
 #V = 2.06+2.6j	# Velocity vector (m/s)
 
 # Animation
@@ -338,14 +338,15 @@ def closure(state):
 		# Collisions
 
 		# TODO: See if the Canvas has a hidden white border
+
+		# TODO: Check collisions this way for all edges (✓)
 		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
 		# TODO: Work out when the collision occurs, don't just reset (✓)
+		# TODO: Round velocity down to 0 for very small values (?)
+		# TODO: Handle edges cases (eg. multiple collisions within the same frame)
+		# TODO: Needs optimizing and simplifying once we're done
 		# NOTE: We're giving the ball energy when we're adjusting its position after a collision.
 		# This seems to be the cause of the mysteriously increasing Y-velocity. (solved)
-
-		# TODO: Handle edges cases (eg. multiple collisions within the same frame)
-		# TODO: Check collisions this way for all edges (...)
-		# TODO: Needs optimizing and simplifying once we're done
 
 		tColMin = timeUntil(P, MIN.X+MIN.Y*1j, V, A)  # Top left
 		tColMax = timeUntil(P, MAX.X+MAX.Y*1j, V, A)  # Bottom right
@@ -360,7 +361,7 @@ def closure(state):
 			# Collide
 			Tx = tColMax.real if xColMax else tColMin.real	# Time at collision
 			Px = axisPos(Tx, P.real, V.real, A.real) 		# Position at collision
-			Vx = -(V.real + A.real*Tx) 						# Velocity at collision (inverted when it bounces)
+			Vx = -(V.real + A.real*Tx)*0.9 					# Velocity at collision (inverted when it bounces)
 
 			# Bounce
 			Px = axisPos(simDt-Tx, Px, Vx, A.real)
@@ -373,7 +374,7 @@ def closure(state):
 			# Collide
 			Ty = tColMax.imag if yColMax else tColMin.imag	# Time at collision
 			Py = axisPos(Ty, P.imag, V.imag, A.imag) 		# Position at collision
-			Vy = -(V.imag + A.imag*Ty) 						# Velocity at collision (inverted when it bounces)
+			Vy = -(V.imag + A.imag*Ty)*0.9 					# Velocity at collision (inverted when it bounces)
 
 			# Bounce
 			Py = axisPos(simDt-Ty, Py, Vy, A.imag)
