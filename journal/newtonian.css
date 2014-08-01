@@ -1,0 +1,42 @@
+/*
+ * Newtonian - newtonian.css
+ *
+ * Jonatan H Sundqvist
+ * July 29 2014
+ *
+ */
+
+body {
+	margin: 0 0 0 0;
+}
+
+
+.header {
+	background-color: #B0C4DE;
+	width: 100%;
+	top: 0;
+	left: 0;
+	display: block;
+	padding: 0pt 0pt 0pt 0pt;
+	min-height: 65pt;
+	/*overflow: auto;*/
+	/*min-height: 36pt;*/
+}
+
+
+.header div {
+	float: left;
+	margin: 0pt 5pt 0pt 5pt;
+	padding: 5pt 5pt 5pt 5pt;
+	height: 100%;
+}
+
+
+.header div:hover {
+	background-color: orange;
+}
+
+
+#logo {
+
+}
