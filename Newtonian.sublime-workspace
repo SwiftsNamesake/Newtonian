@@ -487,7 +487,7 @@
 			"file": "test.py",
 			"settings":
 			{
-				"buffer_size": 14275,
+				"buffer_size": 14806,
 				"line_ending": "Windows"
 			}
 		},
@@ -495,7 +495,7 @@
 			"file": "utilities.py",
 			"settings":
 			{
-				"buffer_size": 2906,
+				"buffer_size": 3617,
 				"line_ending": "Windows"
 			}
 		},
@@ -523,15 +523,31 @@
 		"selected_items":
 		[
 			[
+				"cl",
+				"Project: Close"
+			],
+			[
+				"in",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"im",
+				"Set Syntax: PythonImproved"
+			],
+			[
+				"co",
+				"Git: Commit"
+			],
+			[
+				"add",
+				"Git: Add..."
+			],
+			[
 				"close",
 				"Project: Close"
 			],
 			[
 				"clo",
-				"Project: Close"
-			],
-			[
-				"cl",
 				"Project: Close"
 			],
 			[
@@ -545,14 +561,6 @@
 			[
 				"C++",
 				"Set Syntax: C++"
-			],
-			[
-				"co",
-				"Git: Commit"
-			],
-			[
-				"add",
-				"Git: Add..."
 			],
 			[
 				"com",
@@ -624,10 +632,6 @@
 			],
 			[
 				"impr",
-				"Set Syntax: PythonImproved"
-			],
-			[
-				"im",
 				"Set Syntax: PythonImproved"
 			],
 			[
@@ -825,10 +829,6 @@
 			[
 				"has",
 				"Set Syntax: Haskell"
-			],
-			[
-				"in",
-				"Indentation: Reindent Lines"
 			],
 			[
 				"min",
@@ -1181,6 +1181,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"vY",
+			"0.9",
+			"print",
+			"rect",
+			"rect(",
+			"coll",
+			"x",
+			"real",
+			"X",
+			"x",
+			"c",
+			"simDt",
+			".real",
 			"5",
 			"px",
 			" * ",
@@ -1295,20 +1308,7 @@
 			"A.imag",
 			"print",
 			"tCollision",
-			"axes",
-			"setSelected",
-			"ball",
-			"*1+",
-			"*1",
-			"0.7",
-			"1j",
-			"20",
-			"^",
-			"8",
-			"<",
-			"6",
-			"<",
-			"format"
+			"axes"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1344,7 +1344,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -1353,15 +1353,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 14275,
+						"buffer_size": 14806,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								11000,
-								11000
+								11254,
+								11254
 							]
 						],
 						"settings":
@@ -1474,10 +1474,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 6617.0,
+						"translation.y": 6965.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -1486,15 +1486,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2906,
+						"buffer_size": 3617,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1445,
+								1445
 							]
 						],
 						"settings":
@@ -1603,14 +1603,14 @@
 							},
 							"codeintel_tooltips": "popup",
 							"sublime_auto_complete": true,
-							"syntax": "Packages/Python/Python.tmLanguage",
+							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1539.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -1626,8 +1626,8 @@
 						"selection":
 						[
 							[
-								331,
-								331
+								425,
+								425
 							]
 						],
 						"settings":
@@ -1736,13 +1736,14 @@
 							},
 							"codeintel_tooltips": "popup",
 							"sublime_auto_complete": true,
-							"syntax": "Packages/HTML/HTML.tmLanguage"
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -1869,13 +1870,14 @@
 							},
 							"codeintel_tooltips": "popup",
 							"sublime_auto_complete": true,
-							"syntax": "Packages/CSS/CSS.tmLanguage"
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]

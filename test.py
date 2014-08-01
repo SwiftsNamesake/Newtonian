@@ -144,9 +144,9 @@ H = abs(height/s.imag) # TODO: Fix this value
 O = 0.0+H*1j 	# Offset between world origin and screen origin
 
 # Physics
-P = 0.35+1.8j	# Position vector (top left) (m)
-A = 0.0-9.82j 	# Acceleration vector (m/s^2)
-V = rect(3.6, 20.0*π/180.0)
+P = 5.35+1.8j	# Position vector (top left) (m)
+A = 0.00-9.82j 	# Acceleration vector (m/s^2)
+V = rect(3.6, 135*π/180.0)
 #V = 2.06+2.6j	# Velocity vector (m/s)
 
 # Animation
@@ -341,6 +341,7 @@ def closure(state):
 
 		# TODO: Check collisions this way for all edges (✓)
 		# TODO: Extract bounce behaviour (flipping real part or imag part, etc.)
+		# TODO: More sophisticated collisions (tangents, normal force, etc.)
 		# TODO: Work out when the collision occurs, don't just reset (✓)
 		# TODO: Round velocity down to 0 for very small values (?)
 		# TODO: Handle edges cases (eg. multiple collisions within the same frame)
@@ -348,47 +349,66 @@ def closure(state):
 		# NOTE: We're giving the ball energy when we're adjusting its position after a collision.
 		# This seems to be the cause of the mysteriously increasing Y-velocity. (solved)
 
-		tColMin = timeUntil(P, MIN.X+MIN.Y*1j, V, A)  # Top left
-		tColMax = timeUntil(P, MAX.X+MAX.Y*1j, V, A)  # Bottom right
+		#tColMin = timeUntil(P, MIN.X+MIN.Y*1j, V, A)  # Top left
+		#tColMax = timeUntil(P, MAX.X+MAX.Y*1j, V, A)  # Bottom right
 
-		xColMin = (0 <= tColMin.real <= simDt)
-		xColMax = (0 <= tColMax.real <= simDt)
+		#xColMin = (0 <= tColMin.real <= simDt)
+		#xColMax = (0 <= tColMax.real <= simDt)
 
-		yColMin = (0 <= tColMin.imag <= simDt)
-		yColMax = (0 <= tColMax.imag <= simDt)
+		#yColMin = (0 <= tColMin.imag <= simDt)
+		#yColMax = (0 <= tColMax.imag <= simDt)
 
-		if xColMin or xColMax:
-			# Collide
-			Tx = tColMax.real if xColMax else tColMin.real	# Time at collision
-			Px = axisPos(Tx, P.real, V.real, A.real) 		# Position at collision
-			Vx = -(V.real + A.real*Tx)*0.9 					# Velocity at collision (inverted when it bounces)
+		Tx = 0
+		xColl = True
+		Px, Vx, Ax = P.real, V.real, A.real
 
-			# Bounce
-			Px = axisPos(simDt-Tx, Px, Vx, A.real)
-			Vx = Vx + A.real*(simDt-Tx)
-		else:
-			Px = axisPos(simDt, P.real, V.real, A.real)
-			Vx = V.real + A.real*simDt
+		while xColl:
+			xColl, Px, Vx, t = collide(Px, Vx, Ax, simDt-Tx, MIN.X, MAX.X, 1.0)
+			if xColl: print(xColl, Px, Vx)
+			Tx += t
 
-		if yColMin or yColMax:
-			# Collide
-			Ty = tColMax.imag if yColMax else tColMin.imag	# Time at collision
-			Py = axisPos(Ty, P.imag, V.imag, A.imag) 		# Position at collision
-			Vy = -(V.imag + A.imag*Ty)*0.9 					# Velocity at collision (inverted when it bounces)
+		Ty = 0
+		yColl = True
+		Py, Vy, Ay = P.imag, V.imag, A.imag
 
-			# Bounce
-			Py = axisPos(simDt-Ty, Py, Vy, A.imag)
-			Vy = Vy + A.imag*(simDt-Ty)
-		else:
-			Py = axisPos(simDt, P.imag, V.imag, A.imag)
-			Vy = V.imag + A.imag*simDt
+		while yColl:
+			yColl, Py, Vy, t = collide(Py, Vy, Ay, simDt-Ty, MIN.Y, MAX.Y, 0.9)
+			Ty += t
+			#print('Ty', Ty)
+
+		#if xColMin or xColMax:
+		#	# Collide
+		#	Tx = tColMax.real if xColMax else tColMin.real	# Time at collision
+		#	Px = axisPos(Tx, P.real, V.real, A.real) 		# Position at collision
+		#	Vx = -(V.real + A.real*Tx)*0.9 					# Velocity at collision (inverted when it bounces)
+		#
+		#	# Bounce
+		#	# TODO: Check for further collision here
+		#	Px = axisPos(simDt-Tx, Px, Vx, A.real)
+		#	Vx = Vx + A.real*(simDt-Tx)
+		#else:
+		#	Px = axisPos(simDt, P.real, V.real, A.real)
+		#	Vx = V.real + A.real*simDt
+		#
+		#if yColMin or yColMax:
+		#	# Collide
+		#	Ty = tColMax.imag if yColMax else tColMin.imag	# Time at collision
+		#	Py = axisPos(Ty, P.imag, V.imag, A.imag) 		# Position at collision
+		#	Vy = -(V.imag + A.imag*Ty)*0.9 					# Velocity at collision (inverted when it bounces)
+		#
+		#	# Bounce
+		#	Py = axisPos(simDt-Ty, Py, Vy, A.imag)
+		#	Vy = Vy + A.imag*(simDt-Ty)
+		#else:
+		#	Py = axisPos(simDt, P.imag, V.imag, A.imag)
+		#	Vy = V.imag + A.imag*simDt
 		
 
 		# This statement is used for debugging timeUntil()
-		print('%.2fs|%.2fm' % { 'Left':    (tColMin.real, P.real),
-								'Ground':  (tColMin.imag, P.imag+S.imag-G),
-								'Right':   (tColMax.real, P.real+S.real),
-								'Ceiling': (tColMax.imag, P.imag) }['Left'])
+		#print('%.2fs|%.2fm' % { 'Left':    (tColMin.real, P.real),
+		#						'Ground':  (tColMin.imag, P.imag+S.imag-G),
+		#						'Right':   (tColMax.real, P.real+S.real),
+		#						'Ceiling': (tColMax.imag, P.imag) }['Left'])
 
 
 		# Update position, velocity, time
@@ -396,7 +416,7 @@ def closure(state):
 		#V += A*dt*dtS
 		P = Px+Py*1j
 		V = Vx+Vy*1j
-		T += dt*dtS
+		T += simDt
 
 		#print('X=%.2fm, Y=%.2fm (T=%.2fs)' % (P.real, P.imag, T))
 		
@@ -404,7 +424,7 @@ def closure(state):
 		canvas.coords(ball, state.worldToScreen())
 		# canvas.coords(ball, state.worldToScreen()[:2])
 		
-		pentagon['vertices'] = rotateVertices(0.2*2*π*dt*dtS, pentagon['centre'], *pentagon['vertices'])
+		pentagon['vertices'] = rotateVertices(0.2*2*π*simDt, pentagon['centre'], *pentagon['vertices'])
 		newCoords = ()
 		
 		for vertex in pentagon['vertices']:

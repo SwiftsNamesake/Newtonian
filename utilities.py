@@ -10,7 +10,7 @@
 #
 
 # TODO | - Consistent and readable naming scheme (cf. axisPos, position)
-#		 -
+#		 - Consistent and flexible API (overloading?)
 
 # SPEC | - 
 #		 -
@@ -53,7 +53,7 @@ def solveParabola(From : 'Real', To : 'Real', V : 'Real', A : 'Real') -> 'Real':
 
 	if (A == 0) and (V != 0):
 		# Not a parabola (linear equation)
-		return -(From-To)/V
+		return (To-From)/V
 	elif (A == 0) and (V == 0):
 		# Not a function (line parallel or perpendicular to X-axis)
 		return [-1, 0][From == To]
@@ -87,6 +87,28 @@ def timeUntil(From : vector, To : vector, V : vector, A : vector) -> vector:
 	dtY = solveParabola(From.imag, To.imag, V.imag, A.imag)
 
 	return dtX+dtY*1j
+
+
+def collide(P, V, A, dt, mini, maxi, restitution):
+
+	''' Advances the simulation until a collision occurs or until the end of the frame, whichever is sooner. '''
+
+	Tmin = solveParabola(P, mini, V, A) # When it reaches maximum
+	Tmax = solveParabola(P, maxi, V, A) # When it reaches minimum
+			
+	T = Tmin if (0 < Tmin <= dt) else Tmax
+	
+	if 0 < T <= dt:
+		# Collide
+		Tc = T								# Time at collision
+		Pc = mini if Tc == Tmin else maxi	# Position at collision
+		Vc = -(V + A*Tc)*restitution 		# Velocity at collision (inverted when it bounces)
+		return True, Pc, Vc, Tc
+	else:
+		# Do not collide
+		Px = axisPos(dt, P, V, A)
+		Vx = V + A*dt
+		return False, Px, Vx, dt
 
 
 def rotate(point, pivot, angle):
