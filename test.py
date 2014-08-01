@@ -344,7 +344,7 @@ def closure(state):
 		# TODO: More sophisticated collisions (tangents, normal force, etc.)
 		# TODO: Work out when the collision occurs, don't just reset (✓)
 		# TODO: Round velocity down to 0 for very small values (?)
-		# TODO: Handle edges cases (eg. multiple collisions within the same frame)
+		# TODO: Handle edges cases (eg. multiple collisions within the same frame) (...)
 		# TODO: Needs optimizing and simplifying once we're done
 		# NOTE: We're giving the ball energy when we're adjusting its position after a collision.
 		# This seems to be the cause of the mysteriously increasing Y-velocity. (solved)
