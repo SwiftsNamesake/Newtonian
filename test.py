@@ -273,7 +273,7 @@ def closure(state):
 	plot  = [canvas.create_oval((-3,-3,0,0), fill='#022EEF', width=0) for x in range(count)]
 	plot  = cycle(plot)
 
-	colours = cycle([('#0000%.2x' % r) for r in range(0, 256, 8)])
+	colours = cycle([('#0000%.2x' % r) for r in range(0, 256, 16)])
 	#colours = cycle(['orange', 'black', 'purple', 'white', '#22CE4F', 'red', '#FC11CF'])
 
 	#arrow = canvas.create_line(state.toScreen(state.P/10)+state.toScreen((state.P+state.V)/10), arrow=tk.LAST)
@@ -282,9 +282,9 @@ def closure(state):
 
 	# Construct vector lines and legend from list of vectors and associated colours
 	for index, vec in enumerate([(state.V, 'purple'), (state.A, 'orange')]):
-		vertices = state.toScreen(state.centre(state.P,state.S))+state.toScreen(state.centre(state.P,state.S)+vec[0]/10) # Tuple of endpoint coordinates
-		xArrow   = canvas.create_line(vertices[:2]+(vertices[2], vertices[1]), arrow=tk.LAST, width=3, fill=vec[1]) # X component
-		yArrow   = canvas.create_line(vertices[:2]+(vertices[0], vertices[3]), arrow=tk.LAST, width=3, fill=vec[1]) # Y component
+		vertices = state.toScreen(state.centre(state.P,state.S))+state.toScreen(state.centre(state.P,state.S)+vec[0]/10) 	# Tuple of endpoint coordinates
+		xArrow   = canvas.create_line(vertices[:2]+(vertices[2], vertices[1]), arrow=tk.LAST, width=3, fill=vec[1]) 		# X component
+		yArrow   = canvas.create_line(vertices[:2]+(vertices[0], vertices[3]), arrow=tk.LAST, width=3, fill=vec[1]) 		# Y component
 		
 		legend	 = canvas.create_line((width-30, 30+index*15, width-10, 30+index*15), fill=vec[1], width=6, capstyle=tk.ROUND)
 		label	 = canvas.create_text((width-45, 30+index*15), text=('V', 'A')[index], anchor=tk.CENTER)
