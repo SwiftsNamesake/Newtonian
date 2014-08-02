@@ -17,3 +17,15 @@
 #		 -
 
 
+class daVinci:
+
+	'''
+	Docstring goes here
+
+	'''
+
+	def __init__(self):
+
+		''' '''
+		
+		pass

@@ -265,16 +265,6 @@ canvas.tag_bind(ball, '<ButtonRelease-1>', toggleSelected)
 #window.bind('<Motion>', move)
 
 
-#def timeUntil(P : 'vector', V : 'vector', A) -> 'vector':
-#	''' Calculates time until object has reached 0 (separately for X and Y) '''
-#	# TODO: Reaches a given point instead (?)
-#	#dt = sqrt(2*dy/abs(A.imag)) + 2*V.imag/abs(A.imag)
-#	dtX = -V.real/A.real + sqrt((V.real**2/A.real-2*P.real)/A.real) if A.real != 0 else -P.real/V.real
-#	dtY = -V.imag/A.imag + sqrt((V.imag**2/A.imag-2*P.imag)/A.imag) if A.imag != 0 else -P.imag/V.imag
-#
-#	return dtX+dtY*1j
-
-
 def closure(state):
 
 	''' '''
