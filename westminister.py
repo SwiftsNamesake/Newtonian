@@ -23,7 +23,7 @@ import daVinci			# Drawing and animation
 from PIL.ImageTk import Image, PhotoImage
 
 
-class Westminister:
+class Westminster:
 
 	'''
 	Docstring goes here
@@ -70,7 +70,11 @@ class Westminister:
 		
 		''' '''
 
-		pass
+		window.bind('<Motion>', clickClosure())
+		window.bind('<space>', pauseClosure())
+		canvas.tag_bind(ball, '<Button-1>', toggleSelected)
+		canvas.tag_bind(ball, '<ButtonRelease-1>', toggleSelected)
+		#window.bind('<Motion>', move)
 
 
 	def run(self):

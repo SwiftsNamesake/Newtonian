@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"load",
+				"loadAndSave"
+			],
+			[
 				"have",
 				"haveBreakfast"
 			],
@@ -487,7 +491,7 @@
 			"file": "test.py",
 			"settings":
 			{
-				"buffer_size": 14812,
+				"buffer_size": 14357,
 				"line_ending": "Windows"
 			}
 		},
@@ -555,6 +559,18 @@
 		"selected_items":
 		[
 			[
+				"clo",
+				"Project: Close"
+			],
+			[
+				"com",
+				"Git: Commit"
+			],
+			[
+				"add",
+				"Git: Add..."
+			],
+			[
 				"cl",
 				"Project: Close"
 			],
@@ -575,19 +591,11 @@
 				"Preferences: Key Bindings - Default"
 			],
 			[
-				"add",
-				"Git: Add..."
-			],
-			[
 				"in",
 				"Indentation: Reindent Lines"
 			],
 			[
 				"close",
-				"Project: Close"
-			],
-			[
-				"clo",
 				"Project: Close"
 			],
 			[
@@ -597,10 +605,6 @@
 			[
 				"C++",
 				"Set Syntax: C++"
-			],
-			[
-				"com",
-				"Git: Commit"
 			],
 			[
 				"addd",
@@ -1068,6 +1072,9 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Jonatan/Desktop/Python/modules/SwiftUtils/EulerTemplate.py",
+		"/C/Users/Jonatan/Desktop/Python/startup.py",
+		"/C/Users/Jonatan/Desktop/Python/projects/Newtonian/README.md",
 		"/C/Users/Jonatan/AppData/Roaming/.minecraft/versions/1.7.10/1.7.10.jar",
 		"/C/Users/Jonatan/AppData/Roaming/.minecraft/minecraft launcher/bg_main.png",
 		"/C/Users/Jonatan/AppData/Roaming/Sublime Text 3/Packages/Default/Default (Windows).sublime-keymap",
@@ -1080,7 +1087,6 @@
 		"/C/Users/Jonatan/AppData/Roaming/Sublime Text 3/Packages/User/PythonGUI.sublime-build",
 		"/C/Users/Jonatan/AppData/Roaming/Sublime Text 3/Packages/User/PythonPrompt.sublime-build",
 		"/C/Users/Jonatan/Desktop/Python/projects/Hangman/main.py",
-		"/C/Users/Jonatan/Desktop/Python/projects/Newtonian/README.md",
 		"/C/Users/Jonatan/Desktop/Python/projects/Newtonian/LICENSE",
 		"/C/Users/Jonatan/Desktop/Python/projects/Newtonian/newtonian.gitignore",
 		"/C/Users/Jonatan/Desktop/Newtonian/utilities.py",
@@ -1111,7 +1117,6 @@
 		"/C/Users/Jonatan/Documents/My Games/Skyrim/SkyrimPrefs.ini",
 		"/C/Users/Jonatan/Desktop/Python/modules/SwiftUtils/SwiftUtils.py",
 		"/C/Users/Jonatan/Desktop/Python/projects/Hangman/data/en_dict_thetoohardforyouversion.txt",
-		"/C/Users/Jonatan/Desktop/Python/startup.py",
 		"/C/Users/Jonatan/Desktop/WebGL/First Person/Utilities.js",
 		"/C/Users/Jonatan/Desktop/Python/projects/Hangman/README.txt",
 		"/C/Users/Jonatan/Desktop/Python/projects/Hangman/LICENSE.txt",
@@ -1194,8 +1199,7 @@
 		"/C/Users/Jonatan/Desktop/Java/examples/ButtonDemo.java",
 		"/C/Users/Jonatan/Desktop/Java/examples/ButtonDemo.class",
 		"/C/Users/Jonatan/Desktop/Chrome/The Merger/source.js",
-		"/C/Users/Jonatan/AppData/Roaming/ghc/i386-mingw32-7.6.3/package.conf.d/base-unicode-symbols-0.2.2.4-d8e60516914ea13736870f40778c5ac1.conf",
-		"/C/Users/Jonatan/Desktop/Python/examples/sockets.py"
+		"/C/Users/Jonatan/AppData/Roaming/ghc/i386-mingw32-7.6.3/package.conf.d/base-unicode-symbols-0.2.2.4-d8e60516914ea13736870f40778c5ac1.conf"
 	],
 	"find":
 	{
@@ -1214,6 +1218,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"C:/Users/Jonatan/Desktop/",
 			"pass",
 			"docstring",
 			"vY",
@@ -1340,8 +1345,7 @@
 			"92",
 			"abs(A.imag)",
 			"tColl",
-			"A.imag",
-			"print"
+			"A.imag"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1386,15 +1390,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 14812,
+						"buffer_size": 14357,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								885,
-								885
+								1745,
+								1745
 							]
 						],
 						"settings":
@@ -1507,7 +1511,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 480.0,
+						"translation.y": 849.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -1636,7 +1640,8 @@
 							},
 							"codeintel_tooltips": "popup",
 							"sublime_auto_complete": true,
-							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage"
+							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 835.0,
