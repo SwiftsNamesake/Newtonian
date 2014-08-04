@@ -9,9 +9,15 @@
 # Desc
 #
 
-# TODO | - 
-#		 - 
-#		 - 
+# TODO | - Collision layers
+#		 - Centre of mass
+#		 - Liquids (?)
+#		 - Non-rigid bodies
+#		 - Tangential collisions
+#		 - Global and local forces, fields (?)
+#		 - Configurations
+#		 - Profiling, optimisations
+
 
 # SPEC | - 
 #		 -

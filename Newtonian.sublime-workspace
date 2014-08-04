@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"prim",
+				"primeDivisors"
+			],
+			[
+				"not",
+				"notAboveRoot"
+			],
+			[
+				"pr",
+				"properDivisors"
+			],
+			[
+				"isA",
+				"isAbundantSum"
+			],
+			[
+				"ab",
+				"isAbundantSum"
+			],
+			[
 				"load",
 				"loadAndSave"
 			],
@@ -202,10 +222,6 @@
 			[
 				"key",
 				"keypresses"
-			],
-			[
-				"not",
-				"NotImplementedError"
 			],
 			[
 				"ele",
@@ -499,7 +515,7 @@
 			"file": "westminister.py",
 			"settings":
 			{
-				"buffer_size": 1151,
+				"buffer_size": 1374,
 				"line_ending": "Windows"
 			}
 		},
@@ -507,7 +523,7 @@
 			"file": "daVinci.py",
 			"settings":
 			{
-				"buffer_size": 238,
+				"buffer_size": 2509,
 				"line_ending": "Windows"
 			}
 		},
@@ -523,7 +539,7 @@
 			"file": "euler.py",
 			"settings":
 			{
-				"buffer_size": 146,
+				"buffer_size": 3510,
 				"line_ending": "Windows"
 			}
 		},
@@ -536,6 +552,14 @@
 			}
 		},
 		{
+			"file": "journal/newtonian.css",
+			"settings":
+			{
+				"buffer_size": 588,
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "journal/newtonian.html",
 			"settings":
 			{
@@ -544,20 +568,33 @@
 			}
 		},
 		{
-			"file": "journal/newtonian.css",
+			"file": "journal/DOManipulations.html",
 			"settings":
 			{
-				"buffer_size": 454,
-				"line_ending": "Windows"
+				"buffer_size": 775,
+				"line_ending": "Windows",
+				"name": "DOManipulations"
 			}
 		}
 	],
-	"build_system": "Packages/User/PythonPrompt.sublime-build",
+	"build_system": "",
 	"command_palette":
 	{
 		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"close",
+				"Project: Close"
+			],
+			[
+				"re",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"im",
+				"Set Syntax: PythonImproved"
+			],
 			[
 				"clo",
 				"Project: Close"
@@ -583,20 +620,12 @@
 				"Git: Add..."
 			],
 			[
-				"im",
-				"Set Syntax: PythonImproved"
-			],
-			[
 				"ke",
 				"Preferences: Key Bindings - Default"
 			],
 			[
 				"in",
 				"Indentation: Reindent Lines"
-			],
-			[
-				"close",
-				"Project: Close"
 			],
 			[
 				"py",
@@ -797,10 +826,6 @@
 			[
 				"jav",
 				"Set Syntax: Java"
-			],
-			[
-				"re",
-				"Indentation: Reindent Lines"
 			],
 			[
 				"user",
@@ -1072,6 +1097,11 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Jonatan/Desktop/Python/projects/Newtonian/journal/newtonian.html",
+		"/C/Users/Jonatan/Desktop/Hemsida/index.html",
+		"/C/Users/Jonatan/Desktop/project euler/Haskell/Problem 16.hs",
+		"/C/Users/Jonatan/Desktop/Python/projects/Newtonian/westminister.py",
+		"/C/Users/Jonatan/Desktop/Python/projects/Newtonian/.git/config",
 		"/C/Users/Jonatan/Desktop/Python/modules/SwiftUtils/EulerTemplate.py",
 		"/C/Users/Jonatan/Desktop/Python/startup.py",
 		"/C/Users/Jonatan/Desktop/Python/projects/Newtonian/README.md",
@@ -1104,8 +1134,6 @@
 		"/C/Users/Jonatan/Desktop/Python/projects/Hangman/data/dicts/animales.txt",
 		"/C/Users/Jonatan/Desktop/Python/projects/Pong.py",
 		"/C/Users/Jonatan/Desktop/Python/projects/Newtonian/ed4a00de-9aba-4429-a228-78821bf9e32a.dmp",
-		"/C/Users/Jonatan/Desktop/Python/projects/Newtonian/.git/config",
-		"/C/Users/Jonatan/Desktop/Hemsida/index.html",
 		"/C/Users/Jonatan/Desktop/WebGL/First Person/FirstPerson.js",
 		"/C/Users/Jonatan/Desktop/WebGL/First Person/MatrixMath.js",
 		"/C/Users/Jonatan/Desktop/Python/projects/Hangman/README.md",
@@ -1196,10 +1224,7 @@
 		"/C/Users/Jonatan/AppData/Roaming/ghc/i386-mingw32-7.6.3/package.conf.d/ghc-mod-3.1.4-ef15a0dac469828c1aa7c6203a43c128.conf",
 		"/C/Users/Jonatan/AppData/Roaming/ghc/i386-mingw32-7.6.3/package.conf.d/mmorph-1.0.0-601ef4deb3a4f2791d8b51b617ba73fa.conf",
 		"/C/Users/Jonatan/Desktop/WebGL/ftpsync.settings",
-		"/C/Users/Jonatan/Desktop/Java/examples/ButtonDemo.java",
-		"/C/Users/Jonatan/Desktop/Java/examples/ButtonDemo.class",
-		"/C/Users/Jonatan/Desktop/Chrome/The Merger/source.js",
-		"/C/Users/Jonatan/AppData/Roaming/ghc/i386-mingw32-7.6.3/package.conf.d/base-unicode-symbols-0.2.2.4-d8e60516914ea13736870f40778c5ac1.conf"
+		"/C/Users/Jonatan/Desktop/Java/examples/ButtonDemo.java"
 	],
 	"find":
 	{
@@ -1218,6 +1243,14 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"div",
+			"1",
+			"digits n = n `mod` 10 : digits (n `div` 10)",
+			"digits 0 = 0 : []",
+			"digitSum = foldr (+) 0 . digits",
+			"Prelude Data.List| ",
+			"Prelude Data.List|",
+			"> let ",
 			"C:/Users/Jonatan/Desktop/",
 			"pass",
 			"docstring",
@@ -1337,15 +1370,7 @@
 			"dy",
 			"tCollision",
 			"real",
-			"complex",
-			"imag",
-			"tCollision",
-			"P.imag+S.imag-G",
-			"abs(A.imag)",
-			"92",
-			"abs(A.imag)",
-			"tColl",
-			"A.imag"
+			"complex"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1381,7 +1406,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -1397,8 +1422,8 @@
 						"selection":
 						[
 							[
-								1745,
-								1745
+								5034,
+								5043
 							]
 						],
 						"settings":
@@ -1511,10 +1536,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 849.0,
+						"translation.y": 3117.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -1523,15 +1548,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1151,
+						"buffer_size": 1374,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								996,
-								996
+								267,
+								267
 							]
 						],
 						"settings":
@@ -1644,10 +1669,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 835.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -1656,15 +1681,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 238,
+						"buffer_size": 2509,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								148,
-								148
+								2418,
+								2418
 							]
 						],
 						"settings":
@@ -1776,10 +1801,10 @@
 							"syntax": "Packages/Python/Python.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1800.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -1911,7 +1936,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
@@ -1920,147 +1945,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 146,
+						"buffer_size": 3510,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								146,
-								146
-							]
-						],
-						"settings":
-						{
-							"codeintel": true,
-							"codeintel_config":
-							{
-								"JavaScript":
-								{
-									"codeintel_max_recursive_dir_depth": 2,
-									"codeintel_scan_files_in_project": false,
-									"javascriptExtraPaths":
-									[
-									]
-								},
-								"PHP":
-								{
-									"codeintel_max_recursive_dir_depth": 5,
-									"codeintel_scan_files_in_project": false,
-									"phpExtraPaths":
-									[
-									]
-								},
-								"Python":
-								{
-									"env":
-									{
-									}
-								}
-							},
-							"codeintel_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_live": true,
-							"codeintel_live_enabled_languages":
-							[
-								"JavaScript",
-								"Mason",
-								"XBL",
-								"XUL",
-								"RHTML",
-								"SCSS",
-								"Python",
-								"HTML",
-								"Ruby",
-								"Python3",
-								"XML",
-								"Sass",
-								"XSLT",
-								"Django",
-								"HTML5",
-								"Perl",
-								"CSS",
-								"Twig",
-								"Less",
-								"Smarty",
-								"Node.js",
-								"Tcl",
-								"TemplateToolkit",
-								"PHP"
-							],
-							"codeintel_max_recursive_dir_depth": 10,
-							"codeintel_scan_exclude_dir":
-							{
-								"JavaScript":
-								[
-									"/build/",
-									"/min/"
-								]
-							},
-							"codeintel_scan_files_in_project": true,
-							"codeintel_selected_catalogs":
-							[
-								"PyWin32",
-								"jQuery",
-								"Rails"
-							],
-							"codeintel_snippets": true,
-							"codeintel_syntax_map":
-							{
-								"Python Django": "Python"
-							},
-							"codeintel_tooltips": "popup",
-							"sublime_auto_complete": true,
-							"syntax": "Packages/Python/Python.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "utilities.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3617,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1963,
-								1963
+								1300,
+								1300
 							]
 						],
 						"settings":
@@ -2173,27 +2066,27 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1059.0,
+						"translation.y": 784.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
-					"file": "journal/newtonian.html",
+					"buffer": 5,
+					"file": "utilities.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 425,
+						"buffer_size": 3617,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								425,
-								425
+								253,
+								3617
 							]
 						],
 						"settings":
@@ -2302,31 +2195,31 @@
 							},
 							"codeintel_tooltips": "popup",
 							"sublime_auto_complete": true,
-							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2222.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 6,
 					"file": "journal/newtonian.css",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 454,
+						"buffer_size": 588,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								109,
-								109
+								581,
+								581
 							]
 						],
 						"settings":
@@ -2440,10 +2333,173 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
+						"translation.y": 59.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "journal/newtonian.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 425,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "journal/DOManipulations.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 775,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								439,
+								439
+							]
+						],
+						"settings":
+						{
+							"auto_name": "DOManipulations",
+							"codeintel": true,
+							"codeintel_config":
+							{
+								"JavaScript":
+								{
+									"codeintel_max_recursive_dir_depth": 2,
+									"codeintel_scan_files_in_project": false,
+									"javascriptExtraPaths":
+									[
+									]
+								},
+								"PHP":
+								{
+									"codeintel_max_recursive_dir_depth": 5,
+									"codeintel_scan_files_in_project": false,
+									"phpExtraPaths":
+									[
+									]
+								},
+								"Python":
+								{
+									"env":
+									{
+									}
+								}
+							},
+							"codeintel_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_live": true,
+							"codeintel_live_enabled_languages":
+							[
+								"JavaScript",
+								"Mason",
+								"XBL",
+								"XUL",
+								"RHTML",
+								"SCSS",
+								"Python",
+								"HTML",
+								"Ruby",
+								"Python3",
+								"XML",
+								"Sass",
+								"XSLT",
+								"Django",
+								"HTML5",
+								"Perl",
+								"CSS",
+								"Twig",
+								"Less",
+								"Smarty",
+								"Node.js",
+								"Tcl",
+								"TemplateToolkit",
+								"PHP"
+							],
+							"codeintel_max_recursive_dir_depth": 10,
+							"codeintel_scan_exclude_dir":
+							{
+								"JavaScript":
+								[
+									"/build/",
+									"/min/"
+								]
+							},
+							"codeintel_scan_files_in_project": true,
+							"codeintel_selected_catalogs":
+							[
+								"PyWin32",
+								"jQuery",
+								"Rails"
+							],
+							"codeintel_snippets": true,
+							"codeintel_syntax_map":
+							{
+								"Python Django": "Python"
+							},
+							"codeintel_tooltips": "popup",
+							"sublime_auto_complete": true,
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
 					"type": "text"
 				}
 			]
@@ -2533,7 +2589,7 @@
 		[
 			[
 				"",
-				"C:\\Users\\Jonatan\\Desktop\\Python\\PythonChallenges\\PyChallenges.sublime-project"
+				"C:\\Users\\Jonatan\\Desktop\\Project Euler\\euler.sublime-project"
 			]
 		],
 		"width": 380.0

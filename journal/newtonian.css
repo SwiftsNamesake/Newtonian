@@ -14,9 +14,8 @@ body {
 .header {
 	background-color: #B0C4DE;
 	width: 100%;
-	top: 0;
-	left: 0;
 	display: block;
+	position: relative;
 	padding: 0pt 0pt 0pt 0pt;
 	min-height: 65pt;
 	/*overflow: auto;*/
@@ -26,6 +25,7 @@ body {
 
 .header div {
 	float: left;
+	display: block;
 	margin: 0pt 5pt 0pt 5pt;
 	padding: 5pt 5pt 5pt 5pt;
 	height: 100%;
@@ -47,5 +47,5 @@ body {
 }
 
 #logo img:hover {
-	-webkit-transform: rotate(20deg);
+	-webkit-transform: rotate(72deg);
 }
