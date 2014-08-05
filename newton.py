@@ -13,10 +13,14 @@
 #		 - Centre of mass
 #		 - Liquids (?)
 #		 - Non-rigid bodies
+#		 - Forces
+#		 	-- Air resistance
+#		 	-. Friction
 #		 - Tangential collisions
 #		 - Global and local forces, fields (?)
 #		 - Configurations
 #		 - Profiling, optimisations
+#		 - Query API, events (?)
 
 
 # SPEC | - 

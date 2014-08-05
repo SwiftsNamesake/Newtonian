@@ -445,4 +445,9 @@ def closure(state):
 state.animator = closure(state)
 state.animator()
 
+def changeA():
+	state.A = float(input())*1j
+
+changeA()
+
 window.mainloop()

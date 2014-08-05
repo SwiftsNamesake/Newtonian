@@ -17,6 +17,8 @@
 #		 	- Drawbacks: potential circular-reference, performance (?), more work
 #		 	- Advantages: greater consistency, allows higher-level operations, makes Sprites reusable
 #		 - Direct coupling to Newton (?)
+#		 - Invisible objects, view ports
+
 
 # SPEC | - 
 #		 -
@@ -25,7 +27,7 @@
 import tkinter as tk
 
 from PIL.ImageTk import PhotoImage, Image
-
+from math import sin, cos
 
 def choose(optional, default):
 	return optional if optional is not None else default
@@ -165,6 +167,16 @@ class daVinci:
 
 
 
+def moveApple():
+	frame = 0
+	def closure(shape, dt):
+		nonlocal frame
+		shape.canvas.move(shape.id, int(60*dt), int(50*sin(dt*(frame+1))-50*sin(dt*(frame))))
+		print(int(50*(sin(dt*(frame+1))-sin(dt*(frame)))))
+		frame += 1
+	return closure
+
+
 def main():
 
 	''' '''
@@ -178,7 +190,7 @@ def main():
 	painter.addSprite((20, 45, 66, 93), 'rectangle', fill='blue', animator=lambda shape, dt: shape.canvas.move(shape.id, int(50*dt),int(50*dt)))
 	painter.addSprite((20, 45, 66, 93), 'oval', fill='yellow', animator=lambda shape, dt: shape.canvas.move(shape.id, int(82*dt),int(30*dt)))
 	painter.addSprite(((20, 45), (66, 93), (2, 70)), 'polygon', fill='orange', animator=lambda shape, dt: shape.canvas.move(shape.id, int(10*dt),int(50*dt)))
-	painter.addSprite((35, 12), 'image', image='apple.png', animator=lambda shape, dt: shape.canvas.move(shape.id, int(50*dt),int(50*dt)))
+	painter.addSprite((35, 200), 'image', image='apple.png', animator=moveApple())
 	painter.begin(win)
 	# 
 
