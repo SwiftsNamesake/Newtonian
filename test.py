@@ -336,7 +336,7 @@ def closure(state):
 		# TODO: Round velocity down to 0 for very small values (?)
 		# TODO: Handle edges cases (eg. multiple collisions within the same frame) (...)
 		# TODO: Needs optimizing and simplifying once we're done
-		# NOTE: We're giving the ball energy when we're adjusting its position after a collision.
+		# NOTE: We're giving the ball energy when we're adjusting it s position after a collision.
 		# This seems to be the cause of the mysteriously increasing Y-velocity. (solved)
 
 		#tColMin = timeUntil(P, MIN.X+MIN.Y*1j, V, A)  # Top left

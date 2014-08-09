@@ -98,6 +98,14 @@ def collide(P, V, A, dt, mini, maxi, restitution):
 			
 	T = Tmin if (0 < Tmin <= dt) else Tmax
 	
+	# Experimental: Round small values to 0 (no more collisions after this point)
+	if 0 <= T < 1e-9:
+		Tc = T								# Time at collision
+		Pc = mini if Tc == Tmin else maxi	# Position at collision
+		Vc = -(V + A*Tc)*restitution 		# Velocity at collision (inverted when it bounces)
+		return False, Pc, 0, 0
+
+
 	if 0 < T <= dt:
 		# Collide
 		Tc = T								# Time at collision
